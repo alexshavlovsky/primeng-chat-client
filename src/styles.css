@@ -30,3 +30,9 @@ body {
 .color-warning {
   color: red;
 }
+
+.validation-error {
+  color: #a80000;
+  font-size: 80%;
+  margin-top: .5em;
+}
