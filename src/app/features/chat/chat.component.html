@@ -1,1 +1,8 @@
-<p>chat works!</p>
+<div class="p-grid p-nogutter p-justify-center p-align-center height-100">
+  <div class="p-col-fixed panel-width">
+    <h4>User principal</h4>
+    <p>Id: {{principal.id}}</p>
+    <p>Nick: {{principal.nick}}</p>
+    <button (click)="logout()">exit</button>
+  </div>
+</div>

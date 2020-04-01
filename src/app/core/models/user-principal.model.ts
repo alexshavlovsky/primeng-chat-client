@@ -1,4 +1,4 @@
 export interface UserPrincipal {
   id: string;
-  name: string;
+  nick: string;
 }

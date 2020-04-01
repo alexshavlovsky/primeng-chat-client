@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {FormValidationService} from '../../core/services/form-validation.service';
+import {UserPrincipalService} from '../../core/services/user-principal.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +14,9 @@ export class LoginComponent implements OnInit {
   form: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
-              private formValidationService: FormValidationService) {
+              private formValidationService: FormValidationService,
+              private userPrincipalService: UserPrincipalService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -29,11 +33,22 @@ export class LoginComponent implements OnInit {
     return this.formValidationService.getValidationMessage(control);
   }
 
+  markAllAsDirty(formGroup: FormGroup) {
+    const controls = formGroup.controls;
+    for (const key in controls) {
+      if (controls.hasOwnProperty(key)) {
+        controls[key].markAsDirty();
+      }
+    }
+  }
+
   onSubmit() {
     if (!this.form.valid) {
+      this.markAllAsDirty(this.form);
       return;
     }
-    console.log({request: this.form.value});
+    this.userPrincipalService.setPrincipal(this.form.value.nick);
+    this.router.navigate(['/']);
   }
 
 }
