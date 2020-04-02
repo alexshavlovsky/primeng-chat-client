@@ -1,5 +1,5 @@
-import {ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment} from '@angular/router';
-import {Observable, of} from 'rxjs';
+import {ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree} from '@angular/router';
+import {defer, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {UserPrincipalService} from '../services/user-principal.service';
@@ -12,22 +12,18 @@ export abstract class AbstractRoleGuard implements CanLoad, CanActivate {
                         protected redirectStrategy: (t: UserPrincipal | null) => string | null) {
   }
 
-  private allowOrRedirect$ = of(this.userService.getPrincipal()).pipe(
-    map(t => {
-      const redirect = this.redirectStrategy(t);
-      if (redirect !== null) {
-        this.router.navigate([redirect]);
-      }
-      return true;
-    })
-  );
+  private allowOrRedirect$ = defer(() => of(this.redirectStrategy(this.userService.getPrincipal())));
 
   canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> {
-    return this.allowOrRedirect$;
+    return this.allowOrRedirect$.pipe(map(r => {
+      if (r !== null) {
+        this.router.navigate([r]);
+      }
+      return r === null;
+    }));
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.allowOrRedirect$;
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
+    return this.allowOrRedirect$.pipe(map(r => r === null ? true : this.router.createUrlTree([r])));
   }
-
 }

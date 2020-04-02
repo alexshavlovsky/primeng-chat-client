@@ -1,8 +1,32 @@
-<div class="p-grid p-nogutter p-justify-center p-align-center height-100">
-  <div class="p-col-fixed panel-width">
-    <h4>User principal</h4>
-    <p>Id: {{principal.id}}</p>
-    <p>Nick: {{principal.nick}}</p>
-    <button (click)="logout()">exit</button>
+<p-menu #menu [popup]="true" [model]="items"></p-menu>
+<div class="container">
+  <div class="users">
+    <div class="ui-inputgroup corner-menu">
+      <input type="text" pInputText value="{{principal?.nick}}" style="width: 125px" disabled>
+      <button pButton type="button" icon="pi pi-bars" class="ui-button-info" (click)="menu.toggle($event)"></button>
+    </div>
+    <div [style]="{width: '100%'}">
+      <p-listbox [options]="[{name: 'User1'},{name:'User2'},{name:'User3'}]" optionLabel="name"
+                 [style]="{width: '100%', border: 'none'}" [readonly]="true"></p-listbox>
+    </div>
+  </div>
+  <div class="users-shad"></div>
+  <div class="messages">
+    <ul>
+      <li>user 1 mess</li>
+      <li>user 2 mess</li>
+      <li>user 3 mess</li>
+      <li>user 4 mess</li>
+      <li>user 5 mess</li>
+      <li>user 6 mess</li>
+      <li>user 7 mess</li>
+      <li>user 8 mess</li>
+    </ul>
+  </div>
+  <div class="footer flex-parent">
+    <div class="ui-inputgroup centered-child">
+      <input type="text" pInputText placeholder="Public message" style="flex-grow: 1">
+      <button pButton type="button" icon="pi pi-pencil" class="ui-button-info"></button>
+    </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {UserPrincipalService} from '../../core/services/user-principal.service';
 import {Router} from '@angular/router';
-import {UserPrincipal} from '../../core/models/user-principal.model';
+import {MenuItem} from 'primeng/api';
 
 @Component({
   selector: 'app-chat',
@@ -10,11 +10,16 @@ import {UserPrincipal} from '../../core/models/user-principal.model';
 })
 export class ChatComponent implements OnInit {
 
+  items: MenuItem[];
+
   constructor(private userPrincipalService: UserPrincipalService,
               private router: Router) {
   }
 
   ngOnInit(): void {
+    this.items = [
+      {label: 'Logout', icon: 'pi pi-fw pi-sign-out', command: () => this.logout()},
+    ];
   }
 
   logout() {
@@ -22,7 +27,7 @@ export class ChatComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  get principal(): UserPrincipal {
+  get principal() {
     return this.userPrincipalService.getPrincipal();
   }
 }
