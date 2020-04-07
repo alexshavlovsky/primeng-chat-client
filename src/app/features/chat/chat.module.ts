@@ -7,6 +7,7 @@ import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {MenuModule} from 'primeng/menu';
 import {ListboxModule} from 'primeng/listbox';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [ChatComponent],
@@ -18,6 +19,7 @@ import {ListboxModule} from 'primeng/listbox';
     InputTextModule,
     MenuModule,
     ListboxModule,
+    FormsModule,
   ]
 })
 export class ChatModule {

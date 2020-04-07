@@ -6,27 +6,22 @@
       <button pButton type="button" icon="pi pi-bars" class="ui-button-info" (click)="menu.toggle($event)"></button>
     </div>
     <div [style]="{width: '100%'}">
-      <p-listbox [options]="[{name: 'User1'},{name:'User2'},{name:'User3'}]" optionLabel="name"
+      <p-listbox [options]=usersList|async optionLabel="sessionId"
                  [style]="{width: '100%', border: 'none'}" [readonly]="true"></p-listbox>
     </div>
   </div>
   <div class="users-shad"></div>
   <div class="messages">
     <ul>
-      <li>user 1 mess</li>
-      <li>user 2 mess</li>
-      <li>user 3 mess</li>
-      <li>user 4 mess</li>
-      <li>user 5 mess</li>
-      <li>user 6 mess</li>
-      <li>user 7 mess</li>
-      <li>user 8 mess</li>
+      <li *ngFor='let message of messages'>{{message.timestamp|date:'HH:mm:ss'}}
+        <b>{{message.sessionId}}</b> - {{message.payload}}</li>
     </ul>
   </div>
   <div class="footer flex-parent">
     <div class="ui-inputgroup centered-child">
-      <input type="text" pInputText placeholder="Public message" style="flex-grow: 1">
-      <button pButton type="button" icon="pi pi-pencil" class="ui-button-info"></button>
+      <input type="text" pInputText placeholder="Public message" style="flex-grow: 1" [(ngModel)]="inputText"
+             (keyup.enter)="send()">
+      <button pButton type="button" icon="pi pi-pencil" class="ui-button-info" (click)="send()"></button>
     </div>
   </div>
 </div>
