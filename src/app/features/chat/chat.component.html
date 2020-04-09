@@ -6,7 +6,7 @@
       <button pButton type="button" icon="pi pi-bars" class="ui-button-info" (click)="menu.toggle($event)"></button>
     </div>
     <div [style]="{width: '100%'}">
-      <p-listbox [options]=usersList|async optionLabel="sessionId"
+      <p-listbox [options]=usersList|async optionLabel="nick"
                  [style]="{width: '100%', border: 'none'}" [readonly]="true"></p-listbox>
     </div>
   </div>

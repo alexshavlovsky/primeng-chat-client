@@ -1,4 +1,4 @@
-export interface MessageModel {
+export interface ServerMessageModel {
   id: string;
   sessionId: string;
   remoteClientId: string;
