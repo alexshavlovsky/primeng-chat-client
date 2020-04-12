@@ -5,7 +5,7 @@ import {MenuItem} from 'primeng/api';
 import {Observable, Subscription} from 'rxjs';
 import {WsService} from '../../core/services/ws.service';
 import {ChatSnapshotService} from '../../core/services/chat-snapshot.service';
-import {filter, tap} from 'rxjs/operators';
+import {filter, map, tap} from 'rxjs/operators';
 import {UserPrincipal} from '../../core/models/user-principal.model';
 import {ChatClientModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
@@ -43,6 +43,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.subscription = this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
       filter(m => m.type === 'msg'),
+      map(m => ({...m, userNick: m.userNick ? m.userNick : m.sessionId})),
       tap(m => this.messages.push(m))
     ).subscribe();
   }

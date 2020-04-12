@@ -36,7 +36,8 @@ export class WsService {
       frameId: this.ongoingFrameId++,
       type: 'updateMe',
       clientId: this.userPrincipalService.getPrincipal().id,
-      payload: this.userPrincipalService.getPrincipal().nick,
+      userNick: this.userPrincipalService.getPrincipal().nick,
+      payload: this.userPrincipalService.getPrincipal().nick, // TODO: remove this unnecessary field
     };
     this.outgoing.next(msg);
   }
@@ -46,6 +47,7 @@ export class WsService {
       frameId: this.ongoingFrameId++,
       type: 'msg',
       clientId: this.userPrincipalService.getPrincipal().id,
+      userNick: this.userPrincipalService.getPrincipal().nick,
       payload: text
     };
     this.outgoing.next(msg);

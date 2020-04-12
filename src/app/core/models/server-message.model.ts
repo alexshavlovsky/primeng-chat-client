@@ -1,7 +1,8 @@
 export interface ServerMessageModel {
   id: string;
   sessionId: string;
-  remoteClientId: string;
+  clientId: string;
+  userNick: string;
   type: string;
   payload: string;
   timestamp: Date;
