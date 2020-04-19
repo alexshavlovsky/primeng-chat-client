@@ -5,16 +5,17 @@
       <input type="text" pInputText value="{{principal?.nick}}" style="width: 125px" disabled>
       <button pButton type="button" icon="pi pi-bars" class="ui-button-info" (click)="menu.toggle($event)"></button>
     </div>
-    <div [style]="{width: '100%'}">
-      <p-listbox [options]=usersList|async optionLabel="nick"
-                 [style]="{width: '100%', border: 'none'}" [readonly]="true"></p-listbox>
-    </div>
+    <p-listbox [options]=usersList|async optionLabel="nick"
+               [style]="{width: '100%', border: 'none'}" [readonly]="true"></p-listbox>
   </div>
   <div class="users-shad"></div>
-  <div class="messages">
-    <ul>
-      <li *ngFor='let message of messages'>{{message.timestamp|date:'HH:mm:ss'}}
-        <b>{{message.userNick}}</b> - {{message.payload}}</li>
+  <div class="messages" #messagesScroll [scrollTop]="messagesScroll.scrollHeight">
+    <ul class="msg-list">
+      <li class="msg-list-entry" *ngFor='let message of messages'>
+        <span class="msg-time">{{message.timestamp|date:'HH:mm'}} </span>
+        <span class="msg-nick" [class.msg-self]="principal?.id === message.clientId">{{message.userNick}}</span>
+        <span class="msg-text"> {{message.payload}}</span>
+      </li>
     </ul>
   </div>
   <div class="footer flex-parent">

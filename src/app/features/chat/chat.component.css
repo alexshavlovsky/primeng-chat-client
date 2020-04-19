@@ -3,6 +3,17 @@
   display: grid;
   grid-template-columns: 1fr 180px;
   grid-template-rows: 1fr 60px;
+  overflow: hidden;
+}
+
+@media (max-width: 540px) {
+  .container {
+    grid-template-columns: 1fr 0;
+  }
+
+  p-listbox {
+    display: none
+  }
 }
 
 .users {
@@ -42,9 +53,42 @@
   box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, .3);
 }
 
-ul {
-  padding-left: 10px;
+.msg-list {
+  padding: 0 8px 0 8px;
+  margin: 0;
   list-style-type: none;
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100%;
+}
+
+.msg-list-entry {
+  margin-bottom: 16px;
+  white-space: nowrap;
+}
+
+.msg-time {
+  font-weight: bold;
+  color: rgb(0, 122, 217);
+}
+
+.msg-nick {
+  border: solid 1px darkgray;
+  border-radius: 10px;
+  padding: 0 8px 0 8px;
+}
+
+.msg-self {
+  border: solid 1px rgb(0, 122, 217);
+  background-color: rgb(0, 122, 217);
+  color: white;
+}
+
+.msg-text {
+  white-space: normal;
 }
 
 .corner-menu {

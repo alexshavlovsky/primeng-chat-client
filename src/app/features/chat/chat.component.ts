@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UserPrincipalService} from '../../core/services/user-principal.service';
 import {Router} from '@angular/router';
 import {MenuItem} from 'primeng/api';
@@ -22,6 +22,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   inputText = '';
 
+  @ViewChild('messagesScroll') private msgScroll: ElementRef;
+
   constructor(private userPrincipalService: UserPrincipalService,
               private router: Router,
               private ws: WsService,
@@ -44,7 +46,10 @@ export class ChatComponent implements OnInit, OnDestroy {
       tap(m => this.snapshotService.handle(m)),
       filter(m => m.type === 'msg'),
       map(m => ({...m, userNick: m.userNick ? m.userNick : m.sessionId})),
-      tap(m => this.messages.push(m))
+      tap(m => {
+        this.messages.push(m);
+        setTimeout(() => this.scrollToBottom());
+      })
     ).subscribe();
   }
 
@@ -63,5 +68,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
     this.ws.sendMsg(this.inputText);
     this.inputText = '';
+  }
+
+  private scrollToBottom() {
+    try {
+      this.msgScroll.nativeElement.scrollTop = this.msgScroll.nativeElement.scrollHeight;
+    } catch (err) {
+    }
   }
 }
