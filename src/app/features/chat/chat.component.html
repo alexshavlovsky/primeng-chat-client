@@ -2,14 +2,16 @@
 <div class="container">
   <div class="users">
     <div class="ui-inputgroup corner-menu">
-      <input type="text" pInputText value="{{principal?.nick}}" style="width: 125px" disabled>
+      <input type="text" pInputText style="width: 125px"
+             [(ngModel)]="nick"
+             (ngModelChange)="nickChanged.next($event)">
       <button pButton type="button" icon="pi pi-bars" class="ui-button-info" (click)="menu.toggle($event)"></button>
     </div>
     <p-listbox [options]=usersList|async optionLabel="nick"
                [style]="{width: '100%', border: 'none'}" [readonly]="true"></p-listbox>
   </div>
   <div class="users-shad"></div>
-  <div class="messages" #messagesScroll [scrollTop]="messagesScroll.scrollHeight">
+  <div class="messages" #messagesScroll>
     <ul class="msg-list">
       <li class="msg-list-entry" *ngFor='let message of messages'>
         <span class="msg-time">{{message.timestamp|date:'HH:mm'}} </span>
