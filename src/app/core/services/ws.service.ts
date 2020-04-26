@@ -5,6 +5,7 @@ import {defer, Observable} from 'rxjs';
 import {ClientMessageModel} from '../models/client-message.model';
 import {UserPrincipalService} from './user-principal.service';
 import {ServerMessageModel} from '../models/server-message.model';
+import {UrlFactoryService} from './url-factory.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +16,9 @@ export class WsService {
   private ongoingFrameId = 0;
   incoming: Observable<ServerMessageModel>;
 
-  private wsUrl(port: number | null, uri: string): string {
-    const l = window.location;
-    return ((l.protocol === 'https:') ? 'wss://' : 'ws://') + l.hostname + ':' + (port ? port.toString() : l.port) + uri;
-  }
-
-  constructor(private userPrincipalService: UserPrincipalService) {
-    this.outgoing = webSocket(this.wsUrl(8080, '/ws/'));
+  constructor(private userPrincipalService: UserPrincipalService,
+              private urlFactory: UrlFactoryService) {
+    this.outgoing = webSocket(urlFactory.getWsUrl());
     this.incoming = defer(() => {
       this.updateUserDetails();
       return this.outgoing;

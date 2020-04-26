@@ -8,9 +8,11 @@ import {InputTextModule} from 'primeng/inputtext';
 import {MenuModule} from 'primeng/menu';
 import {ListboxModule} from 'primeng/listbox';
 import {FormsModule} from '@angular/forms';
+import {MessageInputComponent} from './message-input/message-input.component';
+
 
 @NgModule({
-  declarations: [ChatComponent],
+  declarations: [ChatComponent, MessageInputComponent],
   imports: [
     CommonModule,
     ChatRoutingModule,

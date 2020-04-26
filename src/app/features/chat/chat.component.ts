@@ -9,6 +9,7 @@ import {debounceTime, distinctUntilChanged, filter, map, tap} from 'rxjs/operato
 import {UserPrincipal} from '../../core/models/user-principal.model';
 import {ChatClientModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
+import {MessageWithAttachment} from './message-input/message-input.component';
 
 @Component({
   selector: 'app-chat',
@@ -17,10 +18,9 @@ import {ServerMessageModel} from '../../core/models/server-message.model';
 })
 export class ChatComponent implements OnInit, OnDestroy {
 
-  items: MenuItem[];
+  cornerMenuItems: MenuItem[];
   messages: ServerMessageModel[] = [];
   subscription: Subscription;
-  inputText = '';
 
   nick: string;
   nickChanged: Subject<string> = new Subject<string>();
@@ -42,8 +42,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.items = [
-      {label: 'Logout', icon: 'pi pi-fw pi-sign-out', command: () => this.logout()},
+    this.cornerMenuItems = [
+      {label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout()},
     ];
     this.subscription = this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
@@ -75,12 +75,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  send() {
-    if (this.inputText === '') {
-      return;
-    }
-    this.ws.sendMsg(this.inputText);
-    this.inputText = '';
+  send(event: MessageWithAttachment) {
+    console.log(event);
+    this.ws.sendMsg(event.message);
   }
 
   private scrollToBottom() {
