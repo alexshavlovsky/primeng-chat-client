@@ -5,12 +5,13 @@ import {MenuItem} from 'primeng/api';
 import {Observable, Subject, Subscription} from 'rxjs';
 import {WsService} from '../../core/services/ws.service';
 import {ChatSnapshotService} from '../../core/services/chat-snapshot.service';
-import {debounceTime, distinctUntilChanged, filter, map, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, finalize, map, tap, throttleTime} from 'rxjs/operators';
 import {UserPrincipal} from '../../core/models/user-principal.model';
 import {ChatClientModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
 import {MessageWithAttachment} from './message-input/message-input.component';
 import {UploadService} from '../../core/services/upload.service';
+import {HttpEventType} from '@angular/common/http';
 
 @Component({
   selector: 'app-chat',
@@ -22,6 +23,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   cornerMenuItems: MenuItem[];
   messages: ServerMessageModel[] = [];
   subscription: Subscription;
+  progress: number = null;
 
   nick: string;
   nickChanged: Subject<string> = new Subject<string>();
@@ -78,10 +80,31 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   send(payload: MessageWithAttachment) {
+    // no attachments
+    if (payload.files.length === 0) {
+      this.ws.sendMsg(payload.message);
+      return;
+    }
+
+    // send attachments as a form data
     const formData: FormData = new FormData();
-    payload.files.forEach(file => formData.append('files', file, file.name));
-    this.uploadService.uploadFormData(formData).subscribe();
-    this.ws.sendMsg(payload.message);
+    payload.files.forEach(file => formData.append('file', file, file.name));
+    const events = this.uploadService.uploadFormData(formData);
+
+    // progress bar events
+    this.progress = 0;
+    events.pipe(
+      filter(e => e.type === HttpEventType.UploadProgress),
+      map(e => e.type === HttpEventType.UploadProgress ? Math.floor(100 * e.loaded / e.total) : null),
+      throttleTime(1000),
+      finalize(() => this.progress = null)
+    ).subscribe(v => this.progress = v);
+
+    // response event
+    events.pipe(
+      filter(e => e.type === HttpEventType.Response && e.status === 200 &&
+        e.body === payload.files.length.toString())
+    ).subscribe(() => this.ws.sendMsg(payload.message));
   }
 
   private scrollToBottom() {

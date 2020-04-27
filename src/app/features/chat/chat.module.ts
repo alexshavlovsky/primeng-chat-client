@@ -9,7 +9,7 @@ import {MenuModule} from 'primeng/menu';
 import {ListboxModule} from 'primeng/listbox';
 import {FormsModule} from '@angular/forms';
 import {MessageInputComponent} from './message-input/message-input.component';
-
+import {ProgressBarModule} from 'primeng/progressbar';
 
 @NgModule({
   declarations: [ChatComponent, MessageInputComponent],
@@ -22,6 +22,7 @@ import {MessageInputComponent} from './message-input/message-input.component';
     MenuModule,
     ListboxModule,
     FormsModule,
+    ProgressBarModule,
   ]
 })
 export class ChatModule {

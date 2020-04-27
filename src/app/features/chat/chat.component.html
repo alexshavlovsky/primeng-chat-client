@@ -22,6 +22,9 @@
     </ul>
   </div>
   <div class="footer flex-parent">
-    <app-message-input (newMessage)="send($event)" class="centered-child"></app-message-input>
+    <div class="centered-child">
+      <p-progressBar *ngIf="progress" [value]="progress"></p-progressBar>
+      <app-message-input *ngIf="!progress" (newMessage)="send($event)"></app-message-input>
+    </div>
   </div>
 </div>
