@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
+import {HttpClient, HttpRequest} from '@angular/common/http';
 import {UrlFactoryService} from './url-factory.service';
 import {Observable} from 'rxjs';
 
@@ -12,16 +12,11 @@ export class UploadService {
               private urlFactory: UrlFactoryService) {
   }
 
-  uploadFile(file: File): Observable<HttpEvent<any>> {
-    const formData: FormData = new FormData();
-
-    formData.append('file', file);
-
+  uploadFormData(formData: FormData): Observable<any> {
     const req = new HttpRequest('POST', this.urlFactory.getUploadUrl(), formData, {
       reportProgress: true,
-      responseType: 'json'
+      responseType: 'text'
     });
-
     return this.http.request(req);
   }
 }

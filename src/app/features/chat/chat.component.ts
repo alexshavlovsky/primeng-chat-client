@@ -10,6 +10,7 @@ import {UserPrincipal} from '../../core/models/user-principal.model';
 import {ChatClientModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
 import {MessageWithAttachment} from './message-input/message-input.component';
+import {UploadService} from '../../core/services/upload.service';
 
 @Component({
   selector: 'app-chat',
@@ -30,7 +31,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(private userPrincipalService: UserPrincipalService,
               private router: Router,
               private ws: WsService,
-              private snapshotService: ChatSnapshotService) {
+              private snapshotService: ChatSnapshotService,
+              private uploadService: UploadService) {
   }
 
   get principal(): UserPrincipal {
@@ -75,9 +77,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  send(event: MessageWithAttachment) {
-    console.log(event);
-    this.ws.sendMsg(event.message);
+  send(payload: MessageWithAttachment) {
+    const formData: FormData = new FormData();
+    payload.files.forEach(file => formData.append('files', file, file.name));
+    this.uploadService.uploadFormData(formData).subscribe();
+    this.ws.sendMsg(payload.message);
   }
 
   private scrollToBottom() {

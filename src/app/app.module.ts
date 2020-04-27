@@ -7,6 +7,7 @@ import {AppRoutingModule} from './app.routing.module';
 import {ErrorComponent} from './shared/error/error.component';
 import {PanelModule} from 'primeng/panel';
 import {CommonModule} from '@angular/common';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import {CommonModule} from '@angular/common';
     BrowserAnimationsModule,
     AppRoutingModule,
     PanelModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
