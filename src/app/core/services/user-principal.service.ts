@@ -1,13 +1,15 @@
 import {Injectable} from '@angular/core';
 import {UserPrincipal} from '../models/user-principal.model';
 import {StorageProxyService} from './storage-proxy.service';
+import {UuidFactoryService} from './uuid-factory.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserPrincipalService {
 
-  constructor(private storage: StorageProxyService) {
+  constructor(private storage: StorageProxyService,
+              private uuidFactory: UuidFactoryService) {
   }
 
   private LS_UUID_KEY = 'client-uuid';
@@ -22,12 +24,6 @@ export class UserPrincipalService {
     return item;
   }
 
-  private newUuid() {
-    return ((1e7).toString() + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c: any) =>
-      // tslint:disable-next-line:no-bitwise
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
-  }
-
   getPrincipal(): UserPrincipal | null {
     const nick = this.loadByKeyOrSet(this.LS_NICK_KEY, null);
     const id = this.loadByKeyOrSet(this.LS_UUID_KEY, null);
@@ -35,7 +31,7 @@ export class UserPrincipalService {
   }
 
   setPrincipal(nick: string) {
-    this.loadByKeyOrSet(this.LS_UUID_KEY, this.newUuid);
+    this.loadByKeyOrSet(this.LS_UUID_KEY, this.uuidFactory.newUuid);
     this.storage.setItem(this.LS_NICK_KEY, nick);
   }
 

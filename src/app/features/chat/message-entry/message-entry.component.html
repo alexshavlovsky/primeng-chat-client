@@ -1,0 +1,11 @@
+<span class="msg-time">{{message.timestamp|date:'HH:mm'}} </span>
+<span class="msg-nick" [class.msg-self]="principal?.id === message.clientId">{{message.userNick}}</span>
+<span *ngIf="!richMessage" class="msg-text"> {{message.payload}}</span>
+<span *ngIf="richMessage">
+  <span class="msg-text"> {{richMessage.message}}</span>
+  <button pButton type="button" class="ui-button-rounded ui-button-success"
+          *ngFor="let attachment of richMessage.attachments"
+          (click)="download(attachment)"
+          icon="pi pi-paperclip"
+          label="{{attachment.name}}"></button>
+</span>

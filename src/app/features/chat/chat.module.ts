@@ -10,9 +10,10 @@ import {ListboxModule} from 'primeng/listbox';
 import {FormsModule} from '@angular/forms';
 import {MessageInputComponent} from './message-input/message-input.component';
 import {ProgressBarModule} from 'primeng/progressbar';
+import {MessageEntryComponent} from './message-entry/message-entry.component';
 
 @NgModule({
-  declarations: [ChatComponent, MessageInputComponent],
+  declarations: [ChatComponent, MessageInputComponent, MessageEntryComponent],
   imports: [
     CommonModule,
     ChatRoutingModule,

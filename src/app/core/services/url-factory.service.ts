@@ -15,7 +15,11 @@ export class UrlFactoryService {
   }
 
   public getUploadUrl(): string {
-    return this.uploadUrl(this.API_PORT, '/upload/');
+    return this.uploadUrl(this.API_PORT, '/files/');
+  }
+
+  public getDownloadUrl(): string {
+    return this.getUploadUrl();
   }
 
   private wsUrl(port: number | null, uri: string): string {

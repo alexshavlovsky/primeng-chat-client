@@ -1,0 +1,20 @@
+.msg-time {
+  font-weight: bold;
+  color: rgb(0, 122, 217);
+}
+
+.msg-nick {
+  border: solid 1px darkgray;
+  border-radius: 10px;
+  padding: 0 8px 0 8px;
+}
+
+.msg-self {
+  border: solid 1px rgb(0, 122, 217);
+  background-color: rgb(0, 122, 217);
+  color: white;
+}
+
+.msg-text {
+  white-space: normal;
+}

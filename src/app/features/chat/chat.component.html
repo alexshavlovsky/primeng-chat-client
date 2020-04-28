@@ -15,9 +15,7 @@
   <div class="messages" #messagesScroll>
     <ul class="msg-list">
       <li class="msg-list-entry" *ngFor='let message of messages'>
-        <span class="msg-time">{{message.timestamp|date:'HH:mm'}} </span>
-        <span class="msg-nick" [class.msg-self]="principal?.id === message.clientId">{{message.userNick}}</span>
-        <span class="msg-text"> {{message.payload}}</span>
+        <app-message-entry [principal]="principal" [message]="message"></app-message-entry>
       </li>
     </ul>
   </div>

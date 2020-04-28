@@ -12,6 +12,8 @@ import {ServerMessageModel} from '../../core/models/server-message.model';
 import {MessageWithAttachment} from './message-input/message-input.component';
 import {UploadService} from '../../core/services/upload.service';
 import {HttpEventType} from '@angular/common/http';
+import {AttachmentModel} from '../../core/models/rich-message.model';
+import {UuidFactoryService} from '../../core/services/uuid-factory.service';
 
 @Component({
   selector: 'app-chat',
@@ -34,7 +36,8 @@ export class ChatComponent implements OnInit, OnDestroy {
               private router: Router,
               private ws: WsService,
               private snapshotService: ChatSnapshotService,
-              private uploadService: UploadService) {
+              private uploadService: UploadService,
+              private uuidFactory: UuidFactoryService) {
   }
 
   get principal(): UserPrincipal {
@@ -51,7 +54,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     ];
     this.subscription = this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
-      filter(m => m.type === 'msg'),
+      filter(m => m.type === 'msg' || m.type === 'richMsg'),
       map(m => ({...m, userNick: m.userNick ? m.userNick : m.sessionId})),
       tap(m => {
         this.messages.push(m);
@@ -88,23 +91,32 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     // send attachments as a form data
     const formData: FormData = new FormData();
-    payload.files.forEach(file => formData.append('file', file, file.name));
+    const attachments: AttachmentModel[] = [];
+    payload.files.forEach(file => {
+      const attachment: AttachmentModel = {
+        uid: this.uuidFactory.newUuid(),
+        name: file.name,
+        size: file.size,
+        lastModified: file.lastModified,
+        type: file.type
+      };
+      formData.append('file', file, attachment.uid);
+      attachments.push(attachment);
+    });
     const events = this.uploadService.uploadFormData(formData);
 
-    // progress bar events
     this.progress = 0;
     events.pipe(
+      tap(e => {
+        if (e.type === HttpEventType.Response && e.status === 200 && e.body === payload.files.length.toString()) {
+          this.ws.sendRichMsg({message: payload.message, attachments});
+        }
+      }),
       filter(e => e.type === HttpEventType.UploadProgress),
       map(e => e.type === HttpEventType.UploadProgress ? Math.floor(100 * e.loaded / e.total) : null),
       throttleTime(1000),
       finalize(() => this.progress = null)
     ).subscribe(v => this.progress = v);
-
-    // response event
-    events.pipe(
-      filter(e => e.type === HttpEventType.Response && e.status === 200 &&
-        e.body === payload.files.length.toString())
-    ).subscribe(() => this.ws.sendMsg(payload.message));
   }
 
   private scrollToBottom() {

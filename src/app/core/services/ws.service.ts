@@ -6,6 +6,7 @@ import {ClientMessageModel} from '../models/client-message.model';
 import {UserPrincipalService} from './user-principal.service';
 import {ServerMessageModel} from '../models/server-message.model';
 import {UrlFactoryService} from './url-factory.service';
+import {RichMessageModel} from '../models/rich-message.model';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,17 @@ export class WsService {
       clientId: this.userPrincipalService.getPrincipal().id,
       userNick: this.userPrincipalService.getPrincipal().nick,
       payload: text
+    };
+    this.outgoing.next(msg);
+  }
+
+  sendRichMsg(richMessage: RichMessageModel) {
+    const msg: ClientMessageModel = {
+      frameId: this.ongoingFrameId++,
+      type: 'richMsg',
+      clientId: this.userPrincipalService.getPrincipal().id,
+      userNick: this.userPrincipalService.getPrincipal().nick,
+      payload: JSON.stringify(richMessage)
     };
     this.outgoing.next(msg);
   }
