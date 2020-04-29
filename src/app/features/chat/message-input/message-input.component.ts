@@ -46,16 +46,14 @@ export class MessageInputComponent implements OnInit {
   }
 
   updateFilesMenu() {
-    let i = 0;
     let s = 0;
-    this.filesMenuItems = this.filesList.map(file => {
+    this.filesMenuItems = this.filesList.map((file, i) => {
       s += file.size;
-      i++;
-      return {label: this.formatSizeUnits(file.size) + ' ' + file.name, icon: 'pi pi-times', command: () => this.removeFile(i - 1)};
+      return {label: this.formatSizeUnits(file.size) + ' ' + file.name, icon: 'pi pi-times', command: () => this.removeFile(i)};
     });
-    if (i > 1) {
+    if (this.filesList.length > 1) {
       this.filesMenuItems.push({
-        label: this.formatSizeUnits(s) + ' total ' + i + ' file attachments',
+        label: this.formatSizeUnits(s) + ' total ' + this.filesList.length + ' files',
         icon: 'pi pi-times',
         command: () => this.removeAll()
       });
