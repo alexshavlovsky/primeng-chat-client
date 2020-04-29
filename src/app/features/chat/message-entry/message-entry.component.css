@@ -18,3 +18,7 @@
 .msg-text {
   white-space: normal;
 }
+
+.msg-attachment {
+  margin: 4px 0 4px 8px;
+}

@@ -1,6 +1,12 @@
 # Angular 9 PrimeNg Websocket Chat Client
 
-A simple websocket public chat client with a command query separation and a classic interface.
+A simple websocket public chat client with a command query separation.
+
+Main features:
+- classic interface
+- suitable for small screen sizes
+- messages may contain file attachments
+- so far only public chat has been implemented
 
 A SpringBoot service for this project: [Pure Reactive SpringBoot WebFlux MongoDB WebSocket Chat](https://github.com/alexshavlovsky/spring-mongo-reactive-chat).
 

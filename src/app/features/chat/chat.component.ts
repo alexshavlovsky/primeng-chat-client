@@ -1,11 +1,11 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UserPrincipalService} from '../../core/services/user-principal.service';
 import {Router} from '@angular/router';
-import {MenuItem} from 'primeng/api';
-import {Observable, Subject, Subscription} from 'rxjs';
+import {MenuItem, MessageService} from 'primeng/api';
+import {EMPTY, Observable, Subject, Subscription} from 'rxjs';
 import {WsService} from '../../core/services/ws.service';
 import {ChatSnapshotService} from '../../core/services/chat-snapshot.service';
-import {debounceTime, distinctUntilChanged, filter, finalize, map, tap, throttleTime} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, finalize, map, tap, throttleTime} from 'rxjs/operators';
 import {UserPrincipal} from '../../core/models/user-principal.model';
 import {ChatClientModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
@@ -14,11 +14,13 @@ import {UploadService} from '../../core/services/upload.service';
 import {HttpEventType} from '@angular/common/http';
 import {AttachmentModel} from '../../core/models/rich-message.model';
 import {UuidFactoryService} from '../../core/services/uuid-factory.service';
+import {DownloadService} from '../../core/services/download.service';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
+  styleUrls: ['./chat.component.css'],
+  providers: [MessageService]
 })
 export class ChatComponent implements OnInit, OnDestroy {
 
@@ -37,7 +39,9 @@ export class ChatComponent implements OnInit, OnDestroy {
               private ws: WsService,
               private snapshotService: ChatSnapshotService,
               private uploadService: UploadService,
-              private uuidFactory: UuidFactoryService) {
+              private uuidFactory: UuidFactoryService,
+              private downloadService: DownloadService,
+              private messageService: MessageService) {
   }
 
   get principal(): UserPrincipal {
@@ -89,6 +93,8 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.progress = 0;
+
     // send attachments as a form data
     const formData: FormData = new FormData();
     const attachments: AttachmentModel[] = [];
@@ -103,10 +109,8 @@ export class ChatComponent implements OnInit, OnDestroy {
       formData.append('file', file, attachment.uid);
       attachments.push(attachment);
     });
-    const events = this.uploadService.uploadFormData(formData);
 
-    this.progress = 0;
-    events.pipe(
+    this.uploadService.uploadFormData(formData).pipe(
       tap(e => {
         if (e.type === HttpEventType.Response && e.status === 200 && e.body === payload.files.length.toString()) {
           this.ws.sendRichMsg({message: payload.message, attachments});
@@ -124,5 +128,19 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.msgScroll.nativeElement.scrollTop = this.msgScroll.nativeElement.scrollHeight;
     } catch (err) {
     }
+  }
+
+  downloadAttachment(attachment: AttachmentModel) {
+    this.downloadService.downloadAttachment(attachment).pipe(
+      catchError(e => {
+        this.messageService.add({
+          key: 'toast',
+          severity: 'error',
+          summary: 'Error ' + e.status + ': ' + e.statusText,
+          detail: attachment.name
+        });
+        return EMPTY;
+      })
+    ).subscribe();
   }
 }

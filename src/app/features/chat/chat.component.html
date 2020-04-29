@@ -1,3 +1,4 @@
+<p-toast position="top-center" key="toast"></p-toast>
 <p-menu #cornerMenu [popup]="true" [model]="cornerMenuItems"></p-menu>
 <div class="container">
   <div class="users">
@@ -15,7 +16,9 @@
   <div class="messages" #messagesScroll>
     <ul class="msg-list">
       <li class="msg-list-entry" *ngFor='let message of messages'>
-        <app-message-entry [principal]="principal" [message]="message"></app-message-entry>
+        <app-message-entry
+          [principal]="principal" [message]="message"
+          (attachmentRequest)="downloadAttachment($event)"></app-message-entry>
       </li>
     </ul>
   </div>

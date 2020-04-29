@@ -11,9 +11,17 @@ import {FormsModule} from '@angular/forms';
 import {MessageInputComponent} from './message-input/message-input.component';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {MessageEntryComponent} from './message-entry/message-entry.component';
+import {TooltipModule} from 'primeng/tooltip';
+import {FileSizePipe} from './file-size.pipe';
+import {ToastModule} from 'primeng';
 
 @NgModule({
-  declarations: [ChatComponent, MessageInputComponent, MessageEntryComponent],
+  declarations: [
+    ChatComponent,
+    MessageInputComponent,
+    MessageEntryComponent,
+    FileSizePipe,
+  ],
   imports: [
     CommonModule,
     ChatRoutingModule,
@@ -24,6 +32,8 @@ import {MessageEntryComponent} from './message-entry/message-entry.component';
     ListboxModule,
     FormsModule,
     ProgressBarModule,
+    TooltipModule,
+    ToastModule,
   ]
 })
 export class ChatModule {
