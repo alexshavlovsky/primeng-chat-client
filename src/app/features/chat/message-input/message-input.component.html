@@ -1,11 +1,25 @@
 <p-menu [style]="{width: 'auto'}" #filesMenu [popup]="true" [model]="filesMenuItems"></p-menu>
 <div class="ui-inputgroup">
-  <button pButton type="button" icon="pi pi-paperclip" class="ui-button-info" (click)="fileInputDialog.click()">
+  <button pButton type="button" icon="pi pi-paperclip" class="ui-button-info"
+          (click)="fileInputDialog.click()"
+          pTooltip="Attach files"
+          tooltipPosition="top"
+  >
     <input type="file" style="display:none" #fileInputDialog multiple (change)="newFilesAdded($event)">
   </button>
   <button *ngIf="filesList.length>0" pButton class="ui-button-info" (click)="filesMenu.toggle($event)"
-          [label]="filesList.length.toString()" [style]="{marginLeft: '1px'}"></button>
+          [label]="filesList.length.toString()" [style]="{marginLeft: '1px'}"
+          pTooltip="{{filesToolTipText}}"
+          tooltipPosition="top"
+  ></button>
   <input type="text" pInputText placeholder="Public message" style="flex-grow: 1" [(ngModel)]="inputText"
-         (keyup.enter)="send()">
-  <button pButton type="button" icon="pi pi-pencil" class="ui-button-info" (click)="send()"></button>
+         (keyup.enter)="send()"
+         pTooltip="Message text"
+         tooltipPosition="top"
+  >
+  <button pButton type="button" icon="pi pi-pencil" class="ui-button-info"
+          (click)="send()"
+          pTooltip="Send message"
+          tooltipPosition="top"
+  ></button>
 </div>

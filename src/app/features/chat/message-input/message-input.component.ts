@@ -16,6 +16,7 @@ export class MessageInputComponent implements OnInit {
 
   filesMenuItems: MenuItem[];
   filesList: File[] = [];
+  filesToolTipText = '';
   inputText = '';
 
   @Output() newMessage = new EventEmitter<MessageWithAttachment>();
@@ -41,19 +42,21 @@ export class MessageInputComponent implements OnInit {
     this.updateFilesMenu();
   }
 
-  formatSizeUnits(bytes) {
-    return FileSizePipe.prototype.transform(bytes, '(', ')');
-  }
-
   updateFilesMenu() {
     let s = 0;
     this.filesMenuItems = this.filesList.map((file, i) => {
       s += file.size;
-      return {label: this.formatSizeUnits(file.size) + ' ' + file.name, icon: 'pi pi-times', command: () => this.removeFile(i)};
+      return {
+        label: FileSizePipe.prototype.transform(file.size, '(', ') ') + file.name,
+        icon: 'pi pi-times',
+        command: () => this.removeFile(i)
+      };
     });
+    const fn = this.filesList.length;
+    this.filesToolTipText = `${FileSizePipe.prototype.transform(s)} in ${fn} file${fn === 1 ? '' : 's'}`;
     if (this.filesList.length > 1) {
       this.filesMenuItems.push({
-        label: this.formatSizeUnits(s) + ' total ' + this.filesList.length + ' files',
+        label: this.filesToolTipText,
         icon: 'pi pi-times',
         command: () => this.removeAll()
       });

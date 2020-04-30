@@ -7,7 +7,7 @@
           *ngFor="let attachment of richMessage.attachments"
           (click)="attachmentRequest.emit(attachment)"
           icon="pi pi-paperclip"
-          pTooltip="{{attachment.size|fileSize}}"
+          pTooltip="{{(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy hh:mm')}}"
           tooltipPosition="top"
           label="{{attachment.name}}"></button>
 </span>

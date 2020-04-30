@@ -5,9 +5,15 @@
     <div class="ui-inputgroup corner-menu">
       <input type="text" pInputText style="width: 125px"
              [(ngModel)]="nick"
-             (ngModelChange)="nickChanged.next($event)">
+             (ngModelChange)="nickChanged.next($event)"
+             pTooltip="Your nick"
+             tooltipPosition="bottom"
+      >
       <button pButton type="button" icon="pi pi-bars" class="ui-button-info"
-              (click)="cornerMenu.toggle($event)"></button>
+              (click)="cornerMenu.toggle($event)"
+              pTooltip="User menu"
+              tooltipPosition="bottom"
+      ></button>
     </div>
     <p-listbox [options]=usersList|async optionLabel="nick"
                [style]="{width: '100%', border: 'none'}" [readonly]="true"></p-listbox>
