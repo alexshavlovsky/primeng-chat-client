@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
 import {UrlFactoryService} from './url-factory.service';
 import {AttachmentModel} from '../models/rich-message.model';
 import {tap} from 'rxjs/operators';
@@ -15,7 +15,8 @@ export class DownloadService {
   }
 
   downloadAttachment(attachment: AttachmentModel): Observable<any> {
-    return this.http.get(this.urlFactory.getDownloadUrl() + attachment.uid,
+    const payload = new HttpParams().set('id', attachment.uid);
+    return this.http.post(this.urlFactory.getDownloadUrl(), payload,
       {observe: 'response', responseType: 'blob'}
     ).pipe(
       tap(response => this.redirectBlobToBrowser(response, attachment.name, attachment.type)),
