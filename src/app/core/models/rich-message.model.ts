@@ -1,5 +1,5 @@
 export interface AttachmentModel {
-  uid: string;
+  fileId: string;
   name: string;
   size: number;
   lastModified: number;

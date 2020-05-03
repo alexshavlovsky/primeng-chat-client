@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
+import {HttpClient, HttpEvent, HttpParams, HttpResponse} from '@angular/common/http';
 import {UrlFactoryService} from './url-factory.service';
 import {AttachmentModel} from '../models/rich-message.model';
 import {tap} from 'rxjs/operators';
@@ -8,14 +8,22 @@ import {Observable} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class DownloadService {
+export class AttachmentService {
 
   constructor(private http: HttpClient,
               private urlFactory: UrlFactoryService) {
   }
 
+  uploadFormData(formData: FormData): Observable<HttpEvent<string[]>> {
+    return this.http.post<string[]>(this.urlFactory.getUploadUrl(), formData, {
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'json'
+    });
+  }
+
   downloadAttachment(attachment: AttachmentModel): Observable<any> {
-    const payload = new HttpParams().set('id', attachment.uid);
+    const payload = new HttpParams().set('fileId', attachment.fileId);
     return this.http.post(this.urlFactory.getDownloadUrl(), payload,
       {observe: 'response', responseType: 'blob'}
     ).pipe(

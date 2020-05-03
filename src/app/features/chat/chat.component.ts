@@ -10,11 +10,10 @@ import {UserPrincipal} from '../../core/models/user-principal.model';
 import {ChatClientModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
 import {MessageWithAttachment} from './message-input/message-input.component';
-import {UploadService} from '../../core/services/upload.service';
 import {HttpEventType} from '@angular/common/http';
 import {AttachmentModel} from '../../core/models/rich-message.model';
 import {UuidFactoryService} from '../../core/services/uuid-factory.service';
-import {DownloadService} from '../../core/services/download.service';
+import {AttachmentService} from '../../core/services/attachment.service';
 
 @Component({
   selector: 'app-chat',
@@ -38,9 +37,8 @@ export class ChatComponent implements OnInit, OnDestroy {
               private router: Router,
               private ws: WsService,
               private snapshotService: ChatSnapshotService,
-              private uploadService: UploadService,
               private uuidFactory: UuidFactoryService,
-              private downloadService: DownloadService,
+              private downloadService: AttachmentService,
               private messageService: MessageService) {
   }
 
@@ -100,19 +98,20 @@ export class ChatComponent implements OnInit, OnDestroy {
     const attachments: AttachmentModel[] = [];
     payload.files.forEach(file => {
       const attachment: AttachmentModel = {
-        uid: this.uuidFactory.newUuid(),
+        fileId: undefined,
         name: file.name,
         size: file.size,
         lastModified: file.lastModified,
         type: file.type
       };
-      formData.append('file', file, attachment.uid);
+      formData.append('file', file, file.name);
       attachments.push(attachment);
     });
 
-    this.uploadService.uploadFormData(formData).pipe(
+    this.downloadService.uploadFormData(formData).pipe(
       tap(e => {
-        if (e.type === HttpEventType.Response && e.status === 200 && e.body === payload.files.length.toString()) {
+        if (e.type === HttpEventType.Response && e.status === 200 && e.body instanceof Array && e.body.length === payload.files.length) {
+          e.body.forEach((s, i) => attachments[i].fileId = s);
           this.ws.sendRichMsg({message: payload.message, attachments});
         }
       }),
