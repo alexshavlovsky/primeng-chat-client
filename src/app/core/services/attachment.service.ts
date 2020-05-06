@@ -14,8 +14,8 @@ export class AttachmentService {
               private urlFactory: UrlFactoryService) {
   }
 
-  uploadFormData(formData: FormData): Observable<HttpEvent<string[]>> {
-    return this.http.post<string[]>(this.urlFactory.getUploadUrl(), formData, {
+  uploadFormData(formData: FormData): Observable<HttpEvent<{ [id: string]: string }>> {
+    return this.http.post<{ [id: string]: string }>(this.urlFactory.getUploadUrl(), formData, {
       reportProgress: true,
       observe: 'events',
       responseType: 'json'
@@ -40,5 +40,4 @@ export class AttachmentService {
     link.dispatchEvent(new MouseEvent(`click`, {bubbles: true, cancelable: true, view: window}));
     URL.revokeObjectURL(url);
   }
-
 }

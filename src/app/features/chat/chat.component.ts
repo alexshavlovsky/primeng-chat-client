@@ -98,20 +98,20 @@ export class ChatComponent implements OnInit, OnDestroy {
     const attachments: AttachmentModel[] = [];
     payload.files.forEach(file => {
       const attachment: AttachmentModel = {
-        fileId: undefined,
+        fileId: this.uuidFactory.newUuid(),
         name: file.name,
         size: file.size,
         lastModified: file.lastModified,
         type: file.type
       };
-      formData.append('file', file, file.name);
+      formData.append('file', file, attachment.fileId);
       attachments.push(attachment);
     });
 
     this.downloadService.uploadFormData(formData).pipe(
       tap(e => {
-        if (e.type === HttpEventType.Response && e.status === 200 && e.body instanceof Array && e.body.length === payload.files.length) {
-          e.body.forEach((s, i) => attachments[i].fileId = s);
+        if (e.type === HttpEventType.Response && e.status === 200) {
+          attachments.forEach(a => a.fileId = e.body[a.fileId]);
           this.ws.sendRichMsg({message: payload.message, attachments});
         }
       }),
