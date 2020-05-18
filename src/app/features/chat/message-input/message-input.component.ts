@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MenuItem} from 'primeng';
 import {FileSizePipe} from '../file-size.pipe';
+import {throttleTime} from 'rxjs/operators';
 
 export interface MessageWithAttachment {
   message: string;
@@ -19,7 +20,10 @@ export class MessageInputComponent implements OnInit {
   filesToolTipText = '';
   inputText = '';
 
+  userTypingRaw = new EventEmitter<void>();
+
   @Output() newMessage = new EventEmitter<MessageWithAttachment>();
+  @Output() userTyping = this.userTypingRaw.pipe(throttleTime(2000));
 
   constructor() {
   }

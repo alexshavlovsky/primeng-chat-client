@@ -6,7 +6,6 @@ import {PanelModule} from 'primeng/panel';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {MenuModule} from 'primeng/menu';
-import {ListboxModule} from 'primeng/listbox';
 import {FormsModule} from '@angular/forms';
 import {MessageInputComponent} from './message-input/message-input.component';
 import {ProgressBarModule} from 'primeng/progressbar';
@@ -29,7 +28,6 @@ import {ToastModule} from 'primeng';
     ButtonModule,
     InputTextModule,
     MenuModule,
-    ListboxModule,
     FormsModule,
     ProgressBarModule,
     TooltipModule,

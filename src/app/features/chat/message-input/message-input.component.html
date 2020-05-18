@@ -13,6 +13,7 @@
           tooltipPosition="top"
   ></button>
   <input type="text" pInputText placeholder="Public message" style="flex-grow: 1" [(ngModel)]="inputText"
+         (input)="userTypingRaw.emit()"
          (keyup.enter)="send()"
          pTooltip="Message text"
          tooltipPosition="top"

@@ -14,6 +14,7 @@ import {HttpEventType} from '@angular/common/http';
 import {AttachmentModel} from '../../core/models/rich-message.model';
 import {UuidFactoryService} from '../../core/services/uuid-factory.service';
 import {AttachmentService} from '../../core/services/attachment.service';
+import {TypingService} from '../../core/services/typing.service';
 
 @Component({
   selector: 'app-chat',
@@ -39,7 +40,8 @@ export class ChatComponent implements OnInit, OnDestroy {
               private snapshotService: ChatSnapshotService,
               private uuidFactory: UuidFactoryService,
               private downloadService: AttachmentService,
-              private messageService: MessageService) {
+              private messageService: MessageService,
+              private typingService: TypingService) {
   }
 
   get principal(): UserPrincipal {
@@ -56,6 +58,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     ];
     this.subscription = this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
+      tap(m => this.typingService.handle(m)),
       filter(m => m.type === 'msg' || m.type === 'richMsg'),
       map(m => ({...m, userNick: m.userNick ? m.userNick : m.sessionId})),
       tap(m => {
@@ -141,5 +144,9 @@ export class ChatComponent implements OnInit, OnDestroy {
         return EMPTY;
       })
     ).subscribe();
+  }
+
+  userTyping() {
+    this.ws.setTyping();
   }
 }

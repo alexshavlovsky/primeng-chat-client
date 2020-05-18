@@ -29,36 +29,30 @@ export class WsService {
     );
   }
 
-  updateUserDetails() {
+  private sendTypedMessage(type: string, payload: string) {
     const msg: ClientMessageModel = {
       frameId: this.ongoingFrameId++,
-      type: 'updateMe',
+      type,
       clientId: this.userPrincipalService.getPrincipal().id,
       userNick: this.userPrincipalService.getPrincipal().nick,
-      payload: this.userPrincipalService.getPrincipal().nick, // TODO: remove this unnecessary field
+      payload
     };
     this.outgoing.next(msg);
+  }
+
+  updateUserDetails() {
+    this.sendTypedMessage('updateMe', '');
+  }
+
+  setTyping() {
+    this.sendTypedMessage('setTyping', '');
   }
 
   sendMsg(text: string) {
-    const msg: ClientMessageModel = {
-      frameId: this.ongoingFrameId++,
-      type: 'msg',
-      clientId: this.userPrincipalService.getPrincipal().id,
-      userNick: this.userPrincipalService.getPrincipal().nick,
-      payload: text
-    };
-    this.outgoing.next(msg);
+    this.sendTypedMessage('msg', text);
   }
 
   sendRichMsg(richMessage: RichMessageModel) {
-    const msg: ClientMessageModel = {
-      frameId: this.ongoingFrameId++,
-      type: 'richMsg',
-      clientId: this.userPrincipalService.getPrincipal().id,
-      userNick: this.userPrincipalService.getPrincipal().nick,
-      payload: JSON.stringify(richMessage)
-    };
-    this.outgoing.next(msg);
+    this.sendTypedMessage('richMsg', JSON.stringify(richMessage));
   }
 }

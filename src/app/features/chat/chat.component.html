@@ -15,8 +15,7 @@
               tooltipPosition="bottom"
       ></button>
     </div>
-    <p-listbox [options]=usersList|async optionLabel="nick"
-               [style]="{width: '100%', border: 'none'}" [readonly]="true"></p-listbox>
+    <div class="users-list-entry" *ngFor="let user of usersList|async">{{user.nick}}</div>
   </div>
   <div class="users-shad"></div>
   <div class="messages" #messagesScroll>
@@ -31,7 +30,7 @@
   <div class="footer flex-parent">
     <div class="centered-child">
       <p-progressBar *ngIf="progress" [value]="progress"></p-progressBar>
-      <app-message-input *ngIf="!progress" (newMessage)="send($event)"></app-message-input>
+      <app-message-input *ngIf="!progress" (userTyping)="userTyping()" (newMessage)="send($event)"></app-message-input>
     </div>
   </div>
 </div>
