@@ -3,16 +3,16 @@ import {ChatClientModel} from '../models/chat-client.model';
 import {ServerMessageModel} from '../models/server-message.model';
 import {ChatSnapshotModel} from '../models/chat-snapshot.model';
 import {ChatSnapshotUpdateModel} from '../models/chat-snapshot-update.model';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatSnapshotService {
 
-  users: Map<string, ChatClientModel> = new Map();
-  snapshotVer = -1;
-  usersList: Subject<ChatClientModel[]> = new BehaviorSubject<ChatClientModel[]>([]);
+  private users: Map<string, ChatClientModel> = new Map();
+  private snapshotVer = -1;
+  private usersList$: BehaviorSubject<ChatClientModel[]> = new BehaviorSubject<ChatClientModel[]>([]);
 
   constructor() {
   }
@@ -43,13 +43,10 @@ export class ChatSnapshotService {
       default:
         return;
     }
-    this.usersList.next(this.usersAsSortedList());
+    this.usersList$.next([...this.users.values()]);
   }
 
-  usersAsSortedList(): ChatClientModel[] {
-    return [...this.users.values()].map(m => ({
-      ...m,
-      nick: m.nick ? m.nick : m.sessionId
-    })).sort((a, b) => a.nick.localeCompare(b.nick));
+  getUsersList$(): Observable<ChatClientModel[]> {
+    return this.usersList$.asObservable();
   }
 }

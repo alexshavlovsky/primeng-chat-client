@@ -2,7 +2,7 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import {UserPrincipalService} from '../../core/services/user-principal.service';
 import {Router} from '@angular/router';
 import {MenuItem, MessageService} from 'primeng/api';
-import {EMPTY, Observable, Subject, Subscription} from 'rxjs';
+import {combineLatest, EMPTY, Subject, Subscription} from 'rxjs';
 import {WsService} from '../../core/services/ws.service';
 import {ChatSnapshotService} from '../../core/services/chat-snapshot.service';
 import {catchError, debounceTime, distinctUntilChanged, filter, finalize, map, tap, throttleTime} from 'rxjs/operators';
@@ -26,7 +26,9 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   cornerMenuItems: MenuItem[];
   messages: ServerMessageModel[] = [];
-  subscription: Subscription;
+  users: ChatClientModel[] = [];
+  wsSubscription: Subscription;
+  snapshotSubscription: Subscription;
   progress: number = null;
 
   nick: string;
@@ -48,15 +50,11 @@ export class ChatComponent implements OnInit, OnDestroy {
     return this.userPrincipalService.getPrincipal();
   }
 
-  get usersList(): Observable<ChatClientModel[]> {
-    return this.snapshotService.usersList;
-  }
-
   ngOnInit(): void {
     this.cornerMenuItems = [
       {label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout()},
     ];
-    this.subscription = this.ws.incoming.pipe(
+    this.wsSubscription = this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
       tap(m => this.typingService.handle(m)),
       filter(m => m.type === 'msg' || m.type === 'richMsg'),
@@ -76,6 +74,17 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.ws.updateUserDetails();
       })
     ).subscribe();
+
+    // combine a users list managed by the snapshot service with a typingMap managed by the typing service
+    // and sort the resulting list
+    this.snapshotSubscription = combineLatest([this.snapshotService.getUsersList$(), this.typingService.getTypingMap$()])
+      .subscribe(([users, typingMap]) => {
+        this.users = users.map(user => ({
+          ...user,
+          nick: user.nick ? user.nick : user.sessionId,
+          isTyping: (typingMap.get(user.clientId) !== undefined)
+        })).sort((a, b) => a.nick.localeCompare(b.nick));
+      });
   }
 
   logout() {
@@ -84,7 +93,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.wsSubscription.unsubscribe();
+    this.snapshotSubscription.unsubscribe();
   }
 
   send(payload: MessageWithAttachment) {

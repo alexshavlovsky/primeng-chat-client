@@ -15,7 +15,9 @@
               tooltipPosition="bottom"
       ></button>
     </div>
-    <div class="users-list-entry" *ngFor="let user of usersList|async">{{user.nick}}</div>
+    <div class="users-list-entry"
+         [ngClass]="{'typing': user.isTyping}"
+         *ngFor="let user of users">{{user.nick}}</div>
   </div>
   <div class="users-shad"></div>
   <div class="messages" #messagesScroll>

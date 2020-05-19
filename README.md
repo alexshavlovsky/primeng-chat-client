@@ -6,6 +6,7 @@ Main features:
 - classic interface
 - suitable for small screen sizes
 - messages may contain file attachments
+- user typing animated indication
 - so far only public chat has been implemented
 
 A SpringBoot service for this project: [Pure Reactive SpringBoot WebFlux MongoDB WebSocket Chat](https://github.com/alexshavlovsky/spring-mongo-reactive-chat).

@@ -88,15 +88,21 @@
 }
 
 .typing {
-  animation: typing 500ms linear 4 alternate both
+  animation: typing .6s linear infinite;
 }
 
 @keyframes typing {
   0% {
     background: #ffffff
   }
-  50% {
-    background: #007ad9;
+  20% {
+    background: #99D3FF
+  }
+  40% {
+    background: #ffffff
+  }
+  60% {
+    background: #99D3FF
   }
   100% {
     background: #ffffff
