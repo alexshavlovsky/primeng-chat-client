@@ -5,7 +5,7 @@ import {MenuItem, MessageService} from 'primeng/api';
 import {combineLatest, EMPTY, Subject, Subscription} from 'rxjs';
 import {WsService} from '../../core/services/ws.service';
 import {ChatSnapshotService} from '../../core/services/chat-snapshot.service';
-import {catchError, debounceTime, distinctUntilChanged, filter, finalize, map, tap, throttleTime} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, filter, finalize, map, sampleTime, tap, throttleTime} from 'rxjs/operators';
 import {UserPrincipal} from '../../core/models/user-principal.model';
 import {ChatClientModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
@@ -77,14 +77,15 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     // combine a users list managed by the snapshot service with a typingMap managed by the typing service
     // and sort the resulting list
-    this.snapshotSubscription = combineLatest([this.snapshotService.getUsersList$(), this.typingService.getTypingMap$()])
-      .subscribe(([users, typingMap]) => {
-        this.users = users.map(user => ({
-          ...user,
-          nick: user.nick ? user.nick : user.sessionId,
-          isTyping: (typingMap.get(user.clientId) !== undefined)
-        })).sort((a, b) => a.nick.localeCompare(b.nick));
-      });
+    this.snapshotSubscription = combineLatest([this.snapshotService.getUsersList$(), this.typingService.getTypingMap$()]).pipe(
+      sampleTime(500)
+    ).subscribe(([users, typingMap]) => {
+      this.users = users.map(user => ({
+        ...user,
+        nick: user.nick ? user.nick : user.sessionId,
+        isTyping: (typingMap.get(user.clientId) !== undefined)
+      })).sort((a, b) => a.nick.localeCompare(b.nick));
+    });
   }
 
   logout() {
