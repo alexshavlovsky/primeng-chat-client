@@ -32,7 +32,7 @@
   <div class="footer flex-parent">
     <div class="centered-child">
       <p-progressBar *ngIf="progress" [value]="progress"></p-progressBar>
-      <app-message-input *ngIf="!progress" (userTyping)="userTyping()" (newMessage)="send($event)"></app-message-input>
+      <app-message-input *ngIf="!progress" (userTyping)="userTyping()" (newMessage)="sendMessage($event)"></app-message-input>
     </div>
   </div>
 </div>

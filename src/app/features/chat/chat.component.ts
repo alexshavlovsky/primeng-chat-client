@@ -2,10 +2,21 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import {UserPrincipalService} from '../../core/services/user-principal.service';
 import {Router} from '@angular/router';
 import {MenuItem, MessageService} from 'primeng/api';
-import {combineLatest, EMPTY, Subject, Subscription} from 'rxjs';
+import {combineLatest, EMPTY, Subject} from 'rxjs';
 import {WsService} from '../../core/services/ws.service';
 import {ChatSnapshotService} from '../../core/services/chat-snapshot.service';
-import {catchError, debounceTime, distinctUntilChanged, filter, finalize, map, sampleTime, tap, throttleTime} from 'rxjs/operators';
+import {
+  bufferTime,
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  finalize,
+  map,
+  sampleTime,
+  tap,
+  throttleTime
+} from 'rxjs/operators';
 import {UserPrincipal} from '../../core/models/user-principal.model';
 import {ChatClientModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
@@ -27,8 +38,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   cornerMenuItems: MenuItem[];
   messages: ServerMessageModel[] = [];
   users: ChatClientModel[] = [];
-  wsSubscription: Subscription;
-  snapshotSubscription: Subscription;
   progress: number = null;
 
   nick: string;
@@ -54,13 +63,16 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.cornerMenuItems = [
       {label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout()},
     ];
-    this.wsSubscription = this.ws.incoming.pipe(
+    this.ws.sendUpdateMe();
+    this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
       tap(m => this.typingService.handle(m)),
       filter(m => m.type === 'msg' || m.type === 'richMsg'),
       map(m => ({...m, userNick: m.userNick ? m.userNick : m.sessionId})),
+      bufferTime(600),
+      filter(buffer => buffer.length > 0),
       tap(m => {
-        this.messages.push(m);
+        this.messages.push(...m);
         setTimeout(() => this.scrollToBottom());
       })
     ).subscribe();
@@ -71,14 +83,14 @@ export class ChatComponent implements OnInit, OnDestroy {
       filter(nick => nick !== null && this.nick.length !== 0),
       tap(nick => {
         this.userPrincipalService.setPrincipal(nick);
-        this.ws.updateUserDetails();
+        this.ws.sendUpdateMe();
       })
     ).subscribe();
 
     // combine a users list managed by the snapshot service with a typingMap managed by the typing service
     // and sort the resulting list
-    this.snapshotSubscription = combineLatest([this.snapshotService.getUsersList$(), this.typingService.getTypingMap$()]).pipe(
-      sampleTime(500)
+    combineLatest([this.snapshotService.getUsersList$(), this.typingService.getTypingMap$()]).pipe(
+      sampleTime(700)
     ).subscribe(([users, typingMap]) => {
       this.users = users.map(user => ({
         ...user,
@@ -88,17 +100,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
   }
 
-  logout() {
-    this.userPrincipalService.removePrincipal();
-    this.router.navigate(['/']);
-  }
-
-  ngOnDestroy(): void {
-    this.wsSubscription.unsubscribe();
-    this.snapshotSubscription.unsubscribe();
-  }
-
-  send(payload: MessageWithAttachment) {
+  sendMessage(payload: MessageWithAttachment) {
     // no attachments
     if (payload.files.length === 0) {
       this.ws.sendMsg(payload.message);
@@ -136,13 +138,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     ).subscribe(v => this.progress = v);
   }
 
-  private scrollToBottom() {
-    try {
-      this.msgScroll.nativeElement.scrollTop = this.msgScroll.nativeElement.scrollHeight;
-    } catch (err) {
-    }
-  }
-
   downloadAttachment(attachment: AttachmentModel) {
     this.downloadService.downloadAttachment(attachment).pipe(
       catchError(e => {
@@ -158,6 +153,24 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   userTyping() {
-    this.ws.setTyping();
+    this.ws.sendSetTyping();
+  }
+
+  logout() {
+    this.userPrincipalService.removePrincipal();
+    this.router.navigate(['/']);
+  }
+
+  private scrollToBottom() {
+    try {
+      this.msgScroll.nativeElement.scrollTop = this.msgScroll.nativeElement.scrollHeight;
+    } catch (err) {
+    }
+  }
+
+  ngOnDestroy(): void {
+    // this also cancels all subscriptions to the ws subject
+    // so a manual unsubscription is unnecessary
+    this.ws.closeConnection();
   }
 }
