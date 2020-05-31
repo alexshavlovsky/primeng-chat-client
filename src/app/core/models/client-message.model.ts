@@ -1,7 +1,7 @@
 export interface ClientMessageModel {
   frameId: number;
   clientId: string;
-  userNick: string;
+  nick: string;
   type: string;
   payload: string;
 }

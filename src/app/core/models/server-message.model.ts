@@ -2,7 +2,7 @@ export interface ServerMessageModel {
   id: string;
   sessionId: string;
   clientId: string;
-  userNick: string;
+  nick: string;
   type: string;
   payload: string;
   timestamp: Date;

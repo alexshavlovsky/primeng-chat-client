@@ -33,10 +33,14 @@ export class WsService {
       frameId: this.ongoingFrameId++,
       type,
       clientId: this.userPrincipalService.getPrincipal().id,
-      userNick: this.userPrincipalService.getPrincipal().nick,
+      nick: this.userPrincipalService.getPrincipal().nick,
       payload
     };
     this.subject.next(msg);
+  }
+
+  sendHello() {
+    this.sendTypedMessage('hello', '');
   }
 
   sendUpdateMe() {
