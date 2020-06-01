@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {UserPrincipal} from '../models/user-principal.model';
 import {StorageProxyService} from './storage-proxy.service';
 import {UuidFactoryService} from './uuid-factory.service';
+import {UserModel} from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,13 +24,13 @@ export class UserPrincipalService {
     return item;
   }
 
-  getPrincipal(): UserPrincipal | null {
+  getUser(): UserModel | null {
     const nick = this.loadByKeyOrSet(this.LS_NICK_KEY, null);
     const id = this.loadByKeyOrSet(this.LS_UUID_KEY, null);
     return (id && nick) ? {id, nick} : null;
   }
 
-  setPrincipal(nick: string) {
+  setNick(nick: string) {
     this.loadByKeyOrSet(this.LS_UUID_KEY, this.uuidFactory.newUuid);
     this.storage.setItem(this.LS_NICK_KEY, nick);
   }

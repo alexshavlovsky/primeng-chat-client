@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
       this.markAllAsDirty(this.form);
       return;
     }
-    this.userPrincipalService.setPrincipal(this.form.value.nick);
+    this.userPrincipalService.setNick(this.form.value.nick);
     this.router.navigate(['/']);
   }
 

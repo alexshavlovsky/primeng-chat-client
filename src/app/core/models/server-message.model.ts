@@ -1,8 +1,8 @@
+import {ChatClientModel} from './chat-client.model';
+
 export interface ServerMessageModel {
   id: string;
-  sessionId: string;
-  clientId: string;
-  nick: string;
+  client: ChatClientModel;
   type: string;
   payload: string;
   timestamp: Date;

@@ -3,16 +3,16 @@ import {defer, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 import {UserPrincipalService} from '../services/user-principal.service';
-import {UserPrincipal} from '../models/user-principal.model';
+import {UserModel} from '../models/user.model';
 
 export abstract class AbstractRoleGuard implements CanLoad, CanActivate {
 
   protected constructor(protected userService: UserPrincipalService,
                         protected router: Router,
-                        protected redirectStrategy: (t: UserPrincipal | null) => string | null) {
+                        protected redirectStrategy: (t: UserModel | null) => string | null) {
   }
 
-  private allowOrRedirect$ = defer(() => of(this.redirectStrategy(this.userService.getPrincipal())));
+  private allowOrRedirect$ = defer(() => of(this.redirectStrategy(this.userService.getUser())));
 
   canLoad(route: Route, segments: UrlSegment[]): Observable<boolean> {
     return this.allowOrRedirect$.pipe(map(r => {

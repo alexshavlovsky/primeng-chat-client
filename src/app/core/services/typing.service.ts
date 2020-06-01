@@ -33,10 +33,10 @@ export class TypingService {
 
   handle(m: ServerMessageModel) {
     if (m.type === 'setTyping') {
-      if (this.typingByUserId.get(m.clientId) === undefined) {
+      if (this.typingByUserId.get(m.client.clientId) === undefined) {
         this.mapVersion++;
       }
-      this.typingByUserId.set(m.clientId, new Date().valueOf());
+      this.typingByUserId.set(m.client.clientId, new Date().valueOf());
     }
   }
 }

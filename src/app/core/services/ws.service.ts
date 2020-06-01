@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
-import {ClientMessageModel} from '../models/client-message.model';
 import {UserPrincipalService} from './user-principal.service';
 import {UrlFactoryService} from './url-factory.service';
 import {RichMessageModel} from '../models/rich-message.model';
 import {ServerMessageModel} from '../models/server-message.model';
 import {Observable} from 'rxjs';
+import {OutgoingMessageModel} from '../models/outgoing-message.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,11 +29,10 @@ export class WsService {
   }
 
   private sendTypedMessage(type: string, payload: string) {
-    const msg: ClientMessageModel = {
+    const msg: OutgoingMessageModel = {
       frameId: this.ongoingFrameId++,
       type,
-      clientId: this.userPrincipalService.getPrincipal().id,
-      nick: this.userPrincipalService.getPrincipal().nick,
+      user: this.userPrincipalService.getUser(),
       payload
     };
     this.subject.next(msg);

@@ -20,7 +20,7 @@ export class RootResolverGuard implements CanActivate {
       return true;
     }
     // the root url is redirected based on specified conditions
-    return of(this.userService.getPrincipal()).pipe(
+    return of(this.userService.getUser()).pipe(
       map(t => this.router.createUrlTree([t === null ? RouteUrls.LOGIN : RouteUrls.CHAT])),
     );
   }

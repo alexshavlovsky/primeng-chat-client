@@ -1,5 +1,5 @@
 <span class="msg-time">{{message.timestamp|date:'HH:mm'}} </span>
-<span class="msg-nick" [class.msg-self]="principal?.id === message.clientId">{{message.nick}}</span>
+<span class="msg-nick" [class.msg-self]="principal?.id === message.client.clientId">{{message.client.nick}}</span>
 <span *ngIf="!richMessage" class="msg-text"> {{message.payload}}</span>
 <span *ngIf="richMessage" class="msg-text">
   <span> {{richMessage.message}}</span>

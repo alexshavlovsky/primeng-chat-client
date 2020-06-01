@@ -17,8 +17,7 @@ import {
   tap,
   throttleTime
 } from 'rxjs/operators';
-import {UserPrincipal} from '../../core/models/user-principal.model';
-import {ChatClientModel} from '../../core/models/chat-client.model';
+import {ChatClientTypingModel} from '../../core/models/chat-client.model';
 import {ServerMessageModel} from '../../core/models/server-message.model';
 import {MessageWithAttachment} from './message-input/message-input.component';
 import {HttpEventType} from '@angular/common/http';
@@ -26,6 +25,7 @@ import {AttachmentModel} from '../../core/models/rich-message.model';
 import {UuidFactoryService} from '../../core/services/uuid-factory.service';
 import {AttachmentService} from '../../core/services/attachment.service';
 import {TypingService} from '../../core/services/typing.service';
+import {UserModel} from '../../core/models/user.model';
 
 @Component({
   selector: 'app-chat',
@@ -37,7 +37,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   cornerMenuItems: MenuItem[];
   messages: ServerMessageModel[] = [];
-  users: ChatClientModel[] = [];
+  users: ChatClientTypingModel[] = [];
   progress: number = null;
 
   nick: string;
@@ -55,8 +55,8 @@ export class ChatComponent implements OnInit, OnDestroy {
               private typingService: TypingService) {
   }
 
-  get principal(): UserPrincipal {
-    return this.userPrincipalService.getPrincipal();
+  get principal(): UserModel {
+    return this.userPrincipalService.getUser();
   }
 
   ngOnInit(): void {
@@ -81,19 +81,18 @@ export class ChatComponent implements OnInit, OnDestroy {
       distinctUntilChanged(),
       filter(nick => nick !== null && this.nick.length !== 0),
       tap(nick => {
-        this.userPrincipalService.setPrincipal(nick);
+        this.userPrincipalService.setNick(nick);
         this.ws.sendUpdateMe();
       })
     ).subscribe();
 
     // combine a users list managed by the snapshot service with a typingMap managed by the typing service
     // and sort the resulting list
-    combineLatest([this.snapshotService.getUsersList$(), this.typingService.getTypingMap$()]).pipe(
+    combineLatest([this.snapshotService.getClientsList$(), this.typingService.getTypingMap$()]).pipe(
       sampleTime(700)
     ).subscribe(([users, typingMap]) => {
       this.users = users.map(user => ({
         ...user,
-        nick: user.nick ? user.nick : user.sessionId,
         isTyping: (typingMap.get(user.clientId) !== undefined)
       })).sort((a, b) => a.nick.localeCompare(b.nick));
     });

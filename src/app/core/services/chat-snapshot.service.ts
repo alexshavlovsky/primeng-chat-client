@@ -10,9 +10,9 @@ import {BehaviorSubject, Observable} from 'rxjs';
 })
 export class ChatSnapshotService {
 
-  private users: Map<string, ChatClientModel> = new Map();
+  private clients: Map<string, ChatClientModel> = new Map();
   private snapshotVer = -1;
-  private usersList$: BehaviorSubject<ChatClientModel[]> = new BehaviorSubject<ChatClientModel[]>([]);
+  private clientsList$: BehaviorSubject<ChatClientModel[]> = new BehaviorSubject<ChatClientModel[]>([]);
 
   constructor() {
   }
@@ -21,21 +21,21 @@ export class ChatSnapshotService {
     switch (message.type) {
       case 'snapshot':
         const snapshot = JSON.parse(message.payload) as ChatSnapshotModel;
-        this.snapshotVer = snapshot.snapshotVer;
-        this.users.clear();
-        snapshot.users.forEach(c => this.users.set(c.sessionId, c));
+        this.snapshotVer = snapshot.version;
+        this.clients.clear();
+        snapshot.clients.forEach(client => this.clients.set(client.sessionId, client));
         break;
       case 'snapshotUpdate':
         const update = JSON.parse(message.payload) as ChatSnapshotUpdateModel;
-        if (update.snapshotVer >= this.snapshotVer) {
-          const user = update.user;
+        if (update.version >= this.snapshotVer) {
+          const client = update.client;
           switch (update.type) {
             case 'addUser':
             case 'updateUser':
-              this.users.set(user.sessionId, user);
+              this.clients.set(client.sessionId, client);
               break;
             case 'removeUser':
-              this.users.delete(user.sessionId);
+              this.clients.delete(client.sessionId);
               break;
           }
         }
@@ -43,10 +43,10 @@ export class ChatSnapshotService {
       default:
         return;
     }
-    this.usersList$.next([...this.users.values()]);
+    this.clientsList$.next([...this.clients.values()]);
   }
 
-  getUsersList$(): Observable<ChatClientModel[]> {
-    return this.usersList$.asObservable();
+  getClientsList$(): Observable<ChatClientModel[]> {
+    return this.clientsList$.asObservable();
   }
 }

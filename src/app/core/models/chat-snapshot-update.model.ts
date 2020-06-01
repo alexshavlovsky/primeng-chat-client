@@ -1,7 +1,7 @@
 import {ChatClientModel} from './chat-client.model';
 
 export interface ChatSnapshotUpdateModel {
-  snapshotVer: number;
+  version: number;
   type: string;
-  user: ChatClientModel;
+  client: ChatClientModel;
 }
