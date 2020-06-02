@@ -1,6 +1,6 @@
-<span class="msg-time">{{message.timestamp|date:'HH:mm'}} </span>
-<span class="msg-nick" [class.msg-self]="principal?.id === message.client.clientId">{{message.client.nick}}</span>
-<span *ngIf="!richMessage" class="msg-text"> {{message.payload}}</span>
+<span class="msg-time" [class.msg-info]="isInfo">{{message.timestamp|date:!isInfo ? 'HH:mm' : 'dd-MM-yyyy HH:mm:ss'}} </span>
+<span *ngIf="!isInfo" class="msg-nick" [class.msg-self]="isSelfMessage">{{message.client.nick}}</span>
+<span *ngIf="!richMessage" [class.msg-info]="isInfo" class="msg-text"> {{message.payload}}</span>
 <span *ngIf="richMessage" class="msg-text">
   <span> {{richMessage.message}}</span>
   <button pButton type="button" class="msg-attachment ui-button-raised ui-button-secondary"

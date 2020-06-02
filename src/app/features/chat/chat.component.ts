@@ -67,7 +67,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
       tap(m => this.typingService.handle(m)),
-      filter(m => m.type === 'msg' || m.type === 'richMsg'),
+      filter(m => m.type === 'msg' || m.type === 'richMsg' || m.type === 'info'),
       bufferTime(600),
       filter(buffer => buffer.length > 0),
       tap(m => {

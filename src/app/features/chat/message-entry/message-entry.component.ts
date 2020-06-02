@@ -15,11 +15,16 @@ export class MessageEntryComponent implements OnInit {
   @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();
 
   richMessage: RichMessageModel;
+  isSelfMessage: boolean;
+  isInfo: boolean;
 
   constructor() {
   }
 
   ngOnInit(): void {
     this.richMessage = this.message.type === 'richMsg' ? JSON.parse(this.message.payload) as RichMessageModel : null;
+    const client = this.message.client;
+    this.isSelfMessage = client && client.clientId === this.principal.id;
+    this.isInfo = this.message.type === 'info';
   }
 }

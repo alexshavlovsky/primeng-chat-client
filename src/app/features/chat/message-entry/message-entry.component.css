@@ -15,6 +15,11 @@
   color: white;
 }
 
+.msg-info {
+  font-weight: normal;
+  font-size: 80%;
+}
+
 .msg-text {
   white-space: normal;
 }
