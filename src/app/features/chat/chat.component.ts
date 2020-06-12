@@ -41,7 +41,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   progress: number = null;
 
   nick: string;
-  nickChanged: Subject<string> = new Subject<string>();
+  nickChanged: Subject<string> = new Subject();
 
   @ViewChild('messagesScroll') private msgScroll: ElementRef;
 
@@ -63,10 +63,15 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.cornerMenuItems = [
       {label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout()},
     ];
-    this.ws.sendHello();
     this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
       tap(m => this.typingService.handle(m)),
+      tap(m => {
+          if (m.id === 'internal' && m.type === 'command' && m.payload === 'clearChatAppender') {
+            this.messages = [];
+          }
+        }
+      ),
       filter(m => m.type === 'msg' || m.type === 'richMsg' || m.type === 'info'),
       bufferTime(600),
       filter(buffer => buffer.length > 0),
