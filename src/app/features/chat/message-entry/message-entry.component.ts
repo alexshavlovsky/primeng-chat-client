@@ -11,6 +11,7 @@ import {UserModel} from '../../../core/models/user.model';
 export class MessageEntryComponent implements OnInit {
 
   @Input() message: ServerMessageModel;
+  @Input() thumbsUrl: string;
   @Input() principal: UserModel;
   @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();
 
@@ -26,5 +27,9 @@ export class MessageEntryComponent implements OnInit {
     const client = this.message.client;
     this.isSelfMessage = client && client.clientId === this.principal.id;
     this.isInfo = this.message.type === 'info';
+  }
+
+  buildImageHtml(type: string, fileName: string) {
+    return type.startsWith('image') ? `<div style="display:table-cell;width:240px;height:240px;text-align:center;vertical-align:middle;"><img src="${this.thumbsUrl}${fileName}" alt="${type}"></div>` : '';
   }
 }

@@ -1,4 +1,5 @@
-<span class="msg-time" [class.msg-info]="isInfo">{{message.timestamp|date:!isInfo ? 'HH:mm' : 'dd-MM-yyyy HH:mm:ss'}} </span>
+<span class="msg-time"
+      [class.msg-info]="isInfo">{{message.timestamp|date:!isInfo ? 'HH:mm' : 'dd-MM-yyyy HH:mm:ss'}} </span>
 <span *ngIf="!isInfo" class="msg-nick" [class.msg-self]="isSelfMessage">{{message.client.nick}}</span>
 <span *ngIf="!richMessage" [class.msg-info]="isInfo" class="msg-text"> {{message.payload}}</span>
 <span *ngIf="richMessage" class="msg-text">
@@ -7,7 +8,8 @@
           *ngFor="let attachment of richMessage.attachments"
           (click)="attachmentRequest.emit(attachment)"
           icon="pi pi-paperclip"
-          pTooltip="{{(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy hh:mm')}}"
+          pTooltip="{{this.buildImageHtml(attachment.type, attachment.fileId)+'<div>'+(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy HH:mm')+'</div>'}}"
+          [escape]=false
           tooltipPosition="top"
           label="{{attachment.name}}"></button>
 </span>

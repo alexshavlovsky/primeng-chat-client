@@ -18,6 +18,10 @@ export class UrlFactoryService {
     return this.uploadUrl(this.API_PORT, '/files/');
   }
 
+  public getThumbsUrl(): string {
+    return this.uploadUrl(this.API_PORT, '/files/thumbs/');
+  }
+
   public getDownloadUrl(): string {
     return this.getUploadUrl();
   }

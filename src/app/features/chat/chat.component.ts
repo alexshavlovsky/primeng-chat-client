@@ -26,6 +26,7 @@ import {UuidFactoryService} from '../../core/services/uuid-factory.service';
 import {AttachmentService} from '../../core/services/attachment.service';
 import {TypingService} from '../../core/services/typing.service';
 import {UserModel} from '../../core/models/user.model';
+import {UrlFactoryService} from '../../core/services/url-factory.service';
 
 @Component({
   selector: 'app-chat',
@@ -52,11 +53,17 @@ export class ChatComponent implements OnInit, OnDestroy {
               private uuidFactory: UuidFactoryService,
               private downloadService: AttachmentService,
               private messageService: MessageService,
-              private typingService: TypingService) {
+              private typingService: TypingService,
+              private urlFactory: UrlFactoryService
+  ) {
   }
 
   get principal(): UserModel {
     return this.userPrincipalService.getUser();
+  }
+
+  get thumbsUrl(): string {
+    return this.urlFactory.getThumbsUrl();
   }
 
   ngOnInit(): void {
