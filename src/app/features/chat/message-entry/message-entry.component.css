@@ -23,12 +23,3 @@
 .msg-text {
   white-space: normal;
 }
-
-.msg-attachment {
-  margin: 4px 0 4px 8px;
-}
-
-::ng-deep .ui-tooltip {
-  max-width: 280px;
-  text-align: center;
-}

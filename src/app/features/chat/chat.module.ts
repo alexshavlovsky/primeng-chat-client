@@ -13,6 +13,7 @@ import {MessageEntryComponent} from './message-entry/message-entry.component';
 import {TooltipModule} from 'primeng/tooltip';
 import {FileSizePipe} from './file-size.pipe';
 import {ToastModule} from 'primeng';
+import { MessageAttachmentComponent } from './message-entry/message-attachment/message-attachment.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import {ToastModule} from 'primeng';
     MessageInputComponent,
     MessageEntryComponent,
     FileSizePipe,
+    MessageAttachmentComponent,
   ],
   imports: [
     CommonModule,

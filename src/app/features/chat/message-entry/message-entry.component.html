@@ -4,12 +4,9 @@
 <span *ngIf="!richMessage" [class.msg-info]="isInfo" class="msg-text"> {{message.payload}}</span>
 <span *ngIf="richMessage" class="msg-text">
   <span> {{richMessage.message}}</span>
-  <button pButton type="button" class="msg-attachment ui-button-raised ui-button-secondary"
-          *ngFor="let attachment of richMessage.attachments"
-          (click)="attachmentRequest.emit(attachment)"
-          icon="pi pi-paperclip"
-          pTooltip="{{this.buildImageHtml(attachment.type, attachment.fileId)+'<div>'+(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy HH:mm')+'</div>'}}"
-          [escape]=false
-          tooltipPosition="top"
-          label="{{attachment.name}}"></button>
+  <app-message-attachment *ngFor="let attachment of richMessage.attachments"
+                          [attachment]="attachment"
+                          [thumbsUrl]="thumbsUrl"
+                          (attachmentRequest)="attachmentRequest.emit($event)"
+  ></app-message-attachment>
 </span>

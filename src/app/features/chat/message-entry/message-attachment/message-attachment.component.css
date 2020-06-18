@@ -1,0 +1,12 @@
+.msg-attachment {
+  margin: 4px 0 4px 8px;
+  vertical-align: middle;
+}
+
+.img-thumb {
+  margin: 2px;
+}
+
+::ng-deep .ui-tooltip {
+  max-width: 280px;
+}
