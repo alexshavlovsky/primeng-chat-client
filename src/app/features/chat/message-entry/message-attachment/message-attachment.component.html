@@ -1,7 +1,7 @@
 <button pButton type="button" class="msg-attachment ui-button-raised ui-button-secondary"
         (click)="attachmentRequest.emit(attachment)"
-        icon="{{isImage?'':'pi pi-paperclip'}}"
+        icon="{{thumbType?'':'pi pi-paperclip'}}"
         pTooltip="{{(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy HH:mm')}}"
         label="{{attachment.name}}">
-  <img *ngIf="isImage" class="img-thumb" src="{{thumbsUrl+attachment.fileId}}" alt="{{attachment.type}}">
+  <img *ngIf="thumbType" class="img-thumb" src="{{buildThumbUrl(attachment)}}" alt="{{attachment.type}}">
 </button>

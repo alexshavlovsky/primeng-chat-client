@@ -8,7 +8,7 @@ import {AttachmentModel} from '../../../../core/models/rich-message.model';
 })
 export class MessageAttachmentComponent implements OnInit {
 
-  isImage: boolean;
+  thumbType: string;
   @Input() attachment: AttachmentModel;
   @Input() thumbsUrl: string;
   @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();
@@ -16,13 +16,22 @@ export class MessageAttachmentComponent implements OnInit {
   constructor() {
   }
 
+  types: string[] = ['bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf'];
+
   ngOnInit(): void {
-    this.isImage = this.attachment.type.startsWith('image');
+    const typeArr = this.types.filter(v => this.attachment.type.endsWith(v));
+    if (typeArr.length === 1) {
+      this.thumbType = typeArr[0];
+    }
   }
 
   buildImageHtml(type: string, fileName: string) {
     return type.startsWith('image') ?
       `<div style="display:table-cell;width:240px;height:240px;text-align:center;vertical-align:middle;"><img src="${this.thumbsUrl}${fileName}" alt="${type}"></div>` :
       '';
+  }
+
+  buildThumbUrl(attachment: AttachmentModel) {
+    return this.thumbsUrl + this.thumbType + '/' + attachment.fileId;
   }
 }
