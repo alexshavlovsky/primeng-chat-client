@@ -9,6 +9,7 @@ import {AttachmentModel} from '../../../../core/models/rich-message.model';
 export class MessageAttachmentComponent implements OnInit {
 
   thumbType: string;
+  doLazyLoadImage = false;
   @Input() attachment: AttachmentModel;
   @Input() thumbsUrl: string;
   @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();

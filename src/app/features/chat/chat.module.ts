@@ -15,6 +15,7 @@ import {FileSizePipe} from './file-size.pipe';
 import {ToastModule} from 'primeng';
 import { MessageAttachmentComponent } from './message-entry/message-attachment/message-attachment.component';
 import { LinkifyPipe } from './linkify.pipe';
+import {DeferLoadDirective} from './defer-load.directive';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { LinkifyPipe } from './linkify.pipe';
     FileSizePipe,
     MessageAttachmentComponent,
     LinkifyPipe,
+    DeferLoadDirective
   ],
   imports: [
     CommonModule,

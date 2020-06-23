@@ -2,6 +2,9 @@
         (click)="attachmentRequest.emit(attachment)"
         icon="{{thumbType?'':'pi pi-paperclip'}}"
         pTooltip="{{(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy HH:mm')}}"
+        appDeferLoad
+        (deferLoad)="doLazyLoadImage = true"
         label="{{attachment.name}}">
-  <img *ngIf="thumbType" class="img-thumb" src="{{buildThumbUrl(attachment)}}" alt="{{attachment.type}}">
+  <img *ngIf="thumbType && doLazyLoadImage" class="img-thumb" src="{{buildThumbUrl(attachment)}}"
+       alt="{{attachment.type}}">
 </button>
