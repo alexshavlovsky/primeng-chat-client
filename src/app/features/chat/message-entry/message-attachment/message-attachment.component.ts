@@ -10,6 +10,7 @@ export class MessageAttachmentComponent implements OnInit {
 
   thumbType: string;
   doLazyLoadImage = false;
+  doShowSpinner = true;
   @Input() attachment: AttachmentModel;
   @Input() thumbsUrl: string;
   @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();

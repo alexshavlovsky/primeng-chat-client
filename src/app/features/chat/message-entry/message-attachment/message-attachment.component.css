@@ -1,6 +1,8 @@
 .msg-attachment {
   margin: 4px 0 4px 8px;
   vertical-align: middle;
+  max-width: 300px;
+  word-break: break-all;
 }
 
 .img-thumb {

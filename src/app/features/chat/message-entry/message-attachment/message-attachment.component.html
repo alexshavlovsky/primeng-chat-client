@@ -3,8 +3,14 @@
         icon="{{thumbType?'':'pi pi-paperclip'}}"
         pTooltip="{{(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy HH:mm')}}"
         appDeferLoad
-        (deferLoad)="doLazyLoadImage = true"
+        (deferLoad)="doLazyLoadImage=true"
         label="{{attachment.name}}">
-  <img *ngIf="thumbType && doLazyLoadImage" class="img-thumb" src="{{buildThumbUrl(attachment)}}"
-       alt="{{attachment.type}}">
+  <ng-container *ngIf="thumbType">
+    <p-progressSpinner [hidden]="!doShowSpinner" strokeWidth="4"
+                       [style]="{width: '100px', height: '100px', margin: '72px'}"></p-progressSpinner>
+    <img [hidden]="doShowSpinner" class="img-thumb"
+         (load)="this.doShowSpinner=false"
+         (error)="this.doShowSpinner=false"
+         *ngIf="doLazyLoadImage" src="{{buildThumbUrl(attachment)}}" alt="{{attachment.type}}">
+  </ng-container>
 </button>

@@ -12,9 +12,9 @@ import {ProgressBarModule} from 'primeng/progressbar';
 import {MessageEntryComponent} from './message-entry/message-entry.component';
 import {TooltipModule} from 'primeng/tooltip';
 import {FileSizePipe} from './file-size.pipe';
-import {ToastModule} from 'primeng';
-import { MessageAttachmentComponent } from './message-entry/message-attachment/message-attachment.component';
-import { LinkifyPipe } from './linkify.pipe';
+import {ProgressSpinnerModule, ToastModule} from 'primeng';
+import {MessageAttachmentComponent} from './message-entry/message-attachment/message-attachment.component';
+import {LinkifyPipe} from './linkify.pipe';
 import {DeferLoadDirective} from './defer-load.directive';
 
 @NgModule({
@@ -38,6 +38,7 @@ import {DeferLoadDirective} from './defer-load.directive';
     ProgressBarModule,
     TooltipModule,
     ToastModule,
+    ProgressSpinnerModule,
   ]
 })
 export class ChatModule {

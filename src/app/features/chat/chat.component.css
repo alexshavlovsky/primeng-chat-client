@@ -32,7 +32,6 @@
 .messages {
   grid-area: 1 / 1 / 2 / 2;
   overflow-x: hidden;
-  scroll-behavior: smooth;
 }
 
 .footer {
