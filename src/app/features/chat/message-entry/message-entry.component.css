@@ -21,5 +21,6 @@
 }
 
 .msg-text {
+  margin-left: 4px;
   white-space: normal;
 }

@@ -14,6 +14,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {FileSizePipe} from './file-size.pipe';
 import {ToastModule} from 'primeng';
 import { MessageAttachmentComponent } from './message-entry/message-attachment/message-attachment.component';
+import { LinkifyPipe } from './linkify.pipe';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { MessageAttachmentComponent } from './message-entry/message-attachment/m
     MessageEntryComponent,
     FileSizePipe,
     MessageAttachmentComponent,
+    LinkifyPipe,
   ],
   imports: [
     CommonModule,

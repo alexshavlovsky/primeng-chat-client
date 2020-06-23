@@ -1,9 +1,10 @@
 <span class="msg-time"
       [class.msg-info]="isInfo">{{message.timestamp|date:!isInfo ? 'HH:mm' : 'dd-MM-yyyy HH:mm:ss'}} </span>
 <span *ngIf="!isInfo" class="msg-nick" [class.msg-self]="isSelfMessage">{{message.client.nick}}</span>
-<span *ngIf="!richMessage" [class.msg-info]="isInfo" class="msg-text"> {{message.payload}}</span>
+<span *ngIf="!richMessage" [class.msg-info]="isInfo" class="msg-text"
+      [innerHtml]="message.payload|linkify"></span>
 <span *ngIf="richMessage" class="msg-text">
-  <span> {{richMessage.message}}</span>
+  <span [innerHtml]="richMessage.message|linkify"></span>
   <app-message-attachment *ngFor="let attachment of richMessage.attachments"
                           [attachment]="attachment"
                           [thumbsUrl]="thumbsUrl"
