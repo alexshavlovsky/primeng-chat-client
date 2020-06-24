@@ -11,6 +11,9 @@ export class LinkifyPipe implements PipeTransform {
     // Change email addresses to mailto:: links
     const pattern3 = /(([a-zA-Z0-9\-_.])+@[a-zA-Z_]+?(\.[a-zA-Z]{2,6})+)/gim;
     return raw
+    // the following two lines are necessary to prevent injection attempts
+      .replace('<', '&lt;')
+      .replace('>', '&gt;')
       .replace(pattern1, '<a href="$1" target="_blank">$1</a>')
       .replace(pattern2, '$1<a href="http://$2" target="_blank">$2</a>')
       .replace(pattern3, '<a href="mailto:$1">$1</a>');
