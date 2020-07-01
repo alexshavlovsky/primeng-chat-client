@@ -31,8 +31,16 @@ export class MessageInputComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  filesEqual(f1: File, f2: File): boolean {
+    return f1.name === f2.name && f1.lastModified === f2.lastModified && f1.type === f2.type && f1.size === f2.size;
+  }
+
   newFilesAdded(event) {
-    Array.from(event.target.files as FileList).forEach(file => this.filesList.push(file));
+    Array.from(event.target.files as FileList).forEach(file => {
+      if (this.filesList.filter(f => this.filesEqual(f, file)).length === 0) {
+        this.filesList.push(file);
+      }
+    });
     this.updateFilesMenu();
   }
 
