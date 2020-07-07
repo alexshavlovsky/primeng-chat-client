@@ -21,9 +21,13 @@ export class MessageAttachmentComponent implements OnInit {
   types: string[] = ['bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf'];
 
   ngOnInit(): void {
-    const typeArr = this.types.filter(v => this.attachment.type.endsWith(v));
-    if (typeArr.length === 1) {
-      this.thumbType = typeArr[0];
+    if (this.attachment.type.startsWith('video')) {
+      this.thumbType = 'video';
+    } else {
+      const typeArr = this.types.filter(v => this.attachment.type.endsWith(v));
+      if (typeArr.length === 1) {
+        this.thumbType = typeArr[0];
+      }
     }
   }
 
