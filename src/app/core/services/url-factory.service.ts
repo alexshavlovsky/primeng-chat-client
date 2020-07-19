@@ -26,6 +26,11 @@ export class UrlFactoryService {
     return this.getUploadUrl();
   }
 
+  public getVideoSourcesUrl(): string {
+    return this.uploadUrl(this.API_PORT, '/videos/sources/');
+  }
+
+
   private wsUrl(port: number | null, uri: string): string {
     const l = window.location;
     return ((l.protocol === 'https:') ? 'wss://' : 'ws://') + l.hostname + ':' + (port ? port.toString() : l.port) + uri;

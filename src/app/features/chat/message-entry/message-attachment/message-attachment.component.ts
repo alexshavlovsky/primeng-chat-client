@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AttachmentModel} from '../../../../core/models/rich-message.model';
+import {VideoService} from '../../../../core/services/video.service';
 
 @Component({
   selector: 'app-message-attachment',
@@ -15,7 +16,7 @@ export class MessageAttachmentComponent implements OnInit {
   @Input() thumbsUrl: string;
   @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();
 
-  constructor() {
+  constructor(private videoService: VideoService) {
   }
 
   types: string[] = ['bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf'];
@@ -23,6 +24,7 @@ export class MessageAttachmentComponent implements OnInit {
   ngOnInit(): void {
     if (this.attachment.type.startsWith('video')) {
       this.thumbType = 'video';
+      this.videoService.downloadSources(this.attachment).subscribe(cv => console.log(cv));
     } else {
       const typeArr = this.types.filter(v => this.attachment.type.endsWith(v));
       if (typeArr.length === 1) {
