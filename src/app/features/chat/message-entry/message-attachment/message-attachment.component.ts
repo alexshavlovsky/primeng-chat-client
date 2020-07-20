@@ -1,6 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AttachmentModel} from '../../../../core/models/rich-message.model';
 import {VideoService} from '../../../../core/services/video.service';
+import * as Plyr from 'plyr';
+import {UrlFactoryService} from '../../../../core/services/url-factory.service';
+
 
 @Component({
   selector: 'app-message-attachment',
@@ -12,11 +15,13 @@ export class MessageAttachmentComponent implements OnInit {
   thumbType: string;
   doLazyLoadImage = false;
   doShowSpinner = true;
+  player;
   @Input() attachment: AttachmentModel;
   @Input() thumbsUrl: string;
   @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();
 
-  constructor(private videoService: VideoService) {
+  constructor(private videoService: VideoService,
+              private urlFactory: UrlFactoryService) {
   }
 
   types: string[] = ['bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf'];
@@ -24,7 +29,20 @@ export class MessageAttachmentComponent implements OnInit {
   ngOnInit(): void {
     if (this.attachment.type.startsWith('video')) {
       this.thumbType = 'video';
-      this.videoService.downloadSources(this.attachment).subscribe(cv => console.log(cv));
+      this.videoService.downloadSources(this.attachment).subscribe(s => {
+        console.log(s);
+        if (!s.sources || s.sources.length === 0) {
+          return;
+        }
+        const streamsUrl = this.urlFactory.getVideoStreamsUrl();
+        this.player = new Plyr(document.getElementById('vid' + this.attachment.fileId));
+        const source = s.sources.map(v => ({...v, src: streamsUrl + v.src}));
+        s.type = 'video';
+        s.title = this.attachment.name;
+        s.sources = source;
+        s.poster = this.buildThumbUrl(this.attachment);
+        this.player.source = s;
+      });
     } else {
       const typeArr = this.types.filter(v => this.attachment.type.endsWith(v));
       if (typeArr.length === 1) {
@@ -41,5 +59,11 @@ export class MessageAttachmentComponent implements OnInit {
 
   buildThumbUrl(attachment: AttachmentModel) {
     return this.thumbsUrl + this.thumbType + '/' + attachment.fileId;
+  }
+
+  clickDownload(attachment: AttachmentModel) {
+    if (!this.player) {
+      this.attachmentRequest.emit(attachment);
+    }
   }
 }

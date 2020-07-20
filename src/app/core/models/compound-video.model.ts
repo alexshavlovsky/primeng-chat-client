@@ -5,6 +5,7 @@ export interface VideoSource {
 }
 
 export interface CompoundVideoModel {
+  type: string;
   title: string;
   poster: string;
   sources: VideoSource[];

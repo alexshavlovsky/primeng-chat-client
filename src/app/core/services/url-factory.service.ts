@@ -30,6 +30,9 @@ export class UrlFactoryService {
     return this.uploadUrl(this.API_PORT, '/videos/sources/');
   }
 
+  public getVideoStreamsUrl(): string {
+    return this.uploadUrl(this.API_PORT, '/videos/streams/');
+  }
 
   private wsUrl(port: number | null, uri: string): string {
     const l = window.location;

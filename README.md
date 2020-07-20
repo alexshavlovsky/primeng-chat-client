@@ -6,7 +6,9 @@ Main features:
 - classic interface
 - suitable for small screen sizes
 - messages may contain file attachments
-- user typing animated indication
+- displays backend generated thumbnails of the following file attachment types: bmp, jpeg, png, gif, tiff, pdf, any video files supported by ffmpeg
+- plays backend transcoded streams of video file attachments (a transcoder service must be enabled on the backend)
+- animated user typing indication
 - so far only public chat has been implemented
 - both backend and frontend apps can handle more than 1000 online users
 
@@ -18,6 +20,7 @@ Component            | Technology
 JS framework         | Angular 9
 UI components        | Prime Ng 9
 Chat protocol        | WebSockets
+Video streaming      | [A simple HTML5, YouTube and Vimeo player](https://github.com/sampotts/plyr)
 
 ## Screenshots
 

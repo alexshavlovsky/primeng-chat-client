@@ -1,11 +1,11 @@
 <button pButton type="button" class="msg-attachment ui-button-raised ui-button-secondary"
-        (click)="attachmentRequest.emit(attachment)"
+        (click)="clickDownload(attachment)"
         icon="{{thumbType?'':'pi pi-paperclip'}}"
         pTooltip="{{(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy HH:mm')}}"
         appDeferLoad
         (deferLoad)="doLazyLoadImage=true"
         label="{{attachment.name}}">
-  <ng-container *ngIf="thumbType">
+  <ng-container *ngIf="thumbType && !player">
     <p-progressSpinner [hidden]="!doShowSpinner" strokeWidth="4"
                        [style]="{width: '100px', height: '100px', margin: '72px'}"></p-progressSpinner>
     <img [hidden]="doShowSpinner" class="img-thumb"
@@ -13,4 +13,6 @@
          (error)="this.doShowSpinner=false"
          *ngIf="doLazyLoadImage" src="{{buildThumbUrl(attachment)}}" alt="{{attachment.type}}">
   </ng-container>
+  <video [hidden]="!player" id="{{'vid'+attachment.fileId}}" controls crossorigin>
+  </video>
 </button>
