@@ -5,21 +5,22 @@ import {Injectable} from '@angular/core';
 })
 export class UrlFactoryService {
 
-  API_PORT = 8080;
+  API_PORT = 8080; // if null then the location.port will be taken
+  API_HOST = null; // if null then the location.hostName will be taken
 
   constructor() {
   }
 
   public getWsUrl(): string {
-    return this.wsUrl(this.API_PORT, '/ws/');
+    return this.wsUrl('/ws/');
   }
 
   public getUploadUrl(): string {
-    return this.uploadUrl(this.API_PORT, '/files/');
+    return this.uploadUrl('/files/');
   }
 
   public getThumbsUrl(): string {
-    return this.uploadUrl(this.API_PORT, '/files/thumbs/');
+    return this.uploadUrl('/files/thumbs/');
   }
 
   public getDownloadUrl(): string {
@@ -27,20 +28,25 @@ export class UrlFactoryService {
   }
 
   public getVideoSourcesUrl(): string {
-    return this.uploadUrl(this.API_PORT, '/videos/sources/');
+    return this.uploadUrl('/videos/sources/');
   }
 
   public getVideoStreamsUrl(): string {
-    return this.uploadUrl(this.API_PORT, '/videos/streams/');
+    return this.uploadUrl('/videos/streams/');
   }
 
-  private wsUrl(port: number | null, uri: string): string {
+  private buildUrl(protocol: string, uri: string) {
     const l = window.location;
-    return ((l.protocol === 'https:') ? 'wss://' : 'ws://') + l.hostname + ':' + (port ? port.toString() : l.port) + uri;
+    const hostName = this.API_HOST ? this.API_HOST : l.hostname;
+    const port = this.API_PORT ? this.API_PORT.toString() : l.port;
+    return protocol + '//' + hostName + ':' + port + uri;
   }
 
-  private uploadUrl(port: number | null, uri: string): string {
-    const l = window.location;
-    return l.protocol + '//' + l.hostname + ':' + (port ? port.toString() : l.port) + uri;
+  private wsUrl(uri: string): string {
+    return this.buildUrl(window.location.protocol === 'https:' ? 'wss:' : 'ws:', uri);
+  }
+
+  private uploadUrl(uri: string): string {
+    return this.buildUrl(window.location.protocol, uri);
   }
 }
