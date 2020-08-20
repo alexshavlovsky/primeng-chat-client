@@ -30,7 +30,6 @@ export class MessageAttachmentComponent implements OnInit {
     if (this.attachment.type.startsWith('video')) {
       this.thumbType = 'video';
       this.videoService.downloadSources(this.attachment).subscribe(s => {
-        console.log(s);
         if (!s.sources || s.sources.length === 0) {
           return;
         }

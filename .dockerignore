@@ -1,0 +1,8 @@
+# Ignore everything
+**
+
+# Allow files and directories
+!Dockerfile
+!dist
+!keystore.p12
+!nginx.conf
