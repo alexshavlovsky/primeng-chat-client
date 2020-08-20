@@ -1,14 +1,12 @@
 import {Injectable} from '@angular/core';
+import {AppPropertiesService} from './app-properties.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UrlFactoryService {
 
-  API_PORT = 8080; // if null then the location.port will be taken
-  API_HOST = null; // if null then the location.hostName will be taken
-
-  constructor() {
+  constructor(private appProps: AppPropertiesService) {
   }
 
   public getWsUrl(): string {
@@ -37,9 +35,9 @@ export class UrlFactoryService {
 
   private buildUrl(protocol: string, uri: string) {
     const l = window.location;
-    const hostName = this.API_HOST ? this.API_HOST : l.hostname;
-    const port = this.API_PORT ? this.API_PORT.toString() : l.port;
-    return protocol + '//' + hostName + ':' + port + uri;
+    const hostName = this.appProps.API_HOST ? this.appProps.API_HOST : l.hostname;
+    const port = this.appProps.API_PORT ? this.appProps.API_PORT.toString() : l.port;
+    return protocol + '//' + hostName + ':' + port + this.appProps.API_URI_PREFIX + uri;
   }
 
   private wsUrl(uri: string): string {

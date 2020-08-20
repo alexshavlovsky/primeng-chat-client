@@ -21,7 +21,8 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/env.js"
             ],
             "styles": [
               "node_modules/primeicons/primeicons.css",
@@ -126,6 +127,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "primeng-chat-client"
 }

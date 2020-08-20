@@ -8,6 +8,7 @@ import {ErrorComponent} from './shared/error/error.component';
 import {PanelModule} from 'primeng/panel';
 import {CommonModule} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
+import {EnvConfigProvider} from './core/env.injector';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import {HttpClientModule} from '@angular/common/http';
     PanelModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [EnvConfigProvider],
   bootstrap: [AppComponent]
 })
 export class AppModule {
