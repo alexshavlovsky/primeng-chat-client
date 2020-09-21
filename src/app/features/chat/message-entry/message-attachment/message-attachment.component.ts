@@ -3,6 +3,9 @@ import {AttachmentModel} from '../../../../core/models/rich-message.model';
 import {VideoService} from '../../../../core/services/video.service';
 import * as Plyr from 'plyr';
 import {UrlFactoryService} from '../../../../core/services/url-factory.service';
+import {concat, Observable} from 'rxjs';
+import {VideoSourceUpdateModel} from '../../../../core/models/video-source-update.model';
+import {filter, map} from 'rxjs/operators';
 
 
 @Component({
@@ -18,6 +21,7 @@ export class MessageAttachmentComponent implements OnInit {
   player;
   @Input() attachment: AttachmentModel;
   @Input() thumbsUrl: string;
+  @Input() videoSourceUpdates$: Observable<VideoSourceUpdateModel>;
   @Output() attachmentRequest: EventEmitter<AttachmentModel> = new EventEmitter();
 
   constructor(private videoService: VideoService,
@@ -29,12 +33,20 @@ export class MessageAttachmentComponent implements OnInit {
   ngOnInit(): void {
     if (this.attachment.type.startsWith('video')) {
       this.thumbType = 'video';
-      this.videoService.downloadSources(this.attachment).subscribe(s => {
+      concat(
+        this.videoService.downloadSources(this.attachment),
+        this.videoSourceUpdates$.pipe(
+          filter(u => u.attachmentId === this.attachment.fileId),
+          map(u => u.compoundWebVideo)
+        )
+      ).subscribe(s => {
         if (!s.sources || s.sources.length === 0) {
           return;
         }
         const streamsUrl = this.urlFactory.getVideoStreamsUrl();
-        this.player = new Plyr(document.getElementById('vid' + this.attachment.fileId));
+        if (!this.player) {
+          this.player = new Plyr(document.getElementById('vid' + this.attachment.fileId));
+        }
         const source = s.sources.map(v => ({...v, src: streamsUrl + v.src}));
         s.type = 'video';
         s.title = this.attachment.name;

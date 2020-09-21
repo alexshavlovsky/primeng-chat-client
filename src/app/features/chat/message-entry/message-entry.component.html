@@ -8,6 +8,7 @@
   <app-message-attachment *ngFor="let attachment of richMessage.attachments"
                           [attachment]="attachment"
                           [thumbsUrl]="thumbsUrl"
+                          [videoSourceUpdates$]="videoSourceUpdates$"
                           (attachmentRequest)="attachmentRequest.emit($event)"
   ></app-message-attachment>
 </span>

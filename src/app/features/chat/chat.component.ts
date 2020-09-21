@@ -2,7 +2,7 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import {UserPrincipalService} from '../../core/services/user-principal.service';
 import {Router} from '@angular/router';
 import {MenuItem, MessageService} from 'primeng/api';
-import {combineLatest, EMPTY, Subject} from 'rxjs';
+import {combineLatest, EMPTY, Observable, Subject} from 'rxjs';
 import {WsService} from '../../core/services/ws.service';
 import {ChatSnapshotService} from '../../core/services/chat-snapshot.service';
 import {
@@ -27,6 +27,7 @@ import {AttachmentService} from '../../core/services/attachment.service';
 import {TypingService} from '../../core/services/typing.service';
 import {UserModel} from '../../core/models/user.model';
 import {UrlFactoryService} from '../../core/services/url-factory.service';
+import {VideoSourceUpdateModel} from '../../core/models/video-source-update.model';
 
 @Component({
   selector: 'app-chat',
@@ -43,6 +44,10 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   nick: string;
   nickChanged: Subject<string> = new Subject();
+  videoSourceUpdates$: Observable<VideoSourceUpdateModel> = this.ws.incoming.pipe(
+    filter(m => m.type === 'videoSource'),
+    map(m => JSON.parse(m.payload) as VideoSourceUpdateModel)
+  );
 
   @ViewChild('messagesScroll') private msgScroll: ElementRef;
 
