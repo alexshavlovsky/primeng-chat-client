@@ -77,4 +77,8 @@ export class MessageAttachmentComponent implements OnInit {
       this.attachmentRequest.emit(attachment);
     }
   }
+
+  clickDownloadVideo(attachment: AttachmentModel) {
+    this.attachmentRequest.emit(attachment);
+  }
 }
