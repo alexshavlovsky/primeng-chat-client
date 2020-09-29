@@ -2,14 +2,14 @@
 <p-menu #cornerMenu [popup]="true" [model]="cornerMenuItems"></p-menu>
 <div class="container">
   <div class="users">
-    <div class="ui-inputgroup corner-menu">
-      <input type="text" pInputText style="width: 125px"
+    <div class="p-inputgroup corner-menu">
+      <input type="text" pInputText
              [(ngModel)]="nick"
              (ngModelChange)="nickChanged.next($event)"
              pTooltip="Your nick"
              tooltipPosition="bottom"
       >
-      <button pButton type="button" icon="pi pi-bars" class="ui-button-info"
+      <button pButton pRipple type="button" icon="pi pi-bars" class="p-button-info"
               (click)="cornerMenu.toggle($event)"
               pTooltip="User menu"
               tooltipPosition="bottom"
@@ -24,7 +24,8 @@
     <ul class="msg-list">
       <li class="msg-list-entry" *ngFor='let message of messages'>
         <app-message-entry
-          [principal]="principal" [message]="message" [thumbsUrl]="thumbsUrl" [videoSourceUpdates$]="videoSourceUpdates$"
+          [principal]="principal" [message]="message" [thumbsUrl]="thumbsUrl"
+          [videoSourceUpdates$]="videoSourceUpdates$"
           (attachmentRequest)="downloadAttachment($event)"></app-message-entry>
       </li>
     </ul>
@@ -32,7 +33,8 @@
   <div class="footer flex-parent">
     <div class="centered-child">
       <p-progressBar *ngIf="progress" [value]="progress"></p-progressBar>
-      <app-message-input *ngIf="!progress" (userTyping)="userTyping()" (newMessage)="sendMessage($event)"></app-message-input>
+      <app-message-input *ngIf="!progress" (userTyping)="userTyping()"
+                         (newMessage)="sendMessage($event)"></app-message-input>
     </div>
   </div>
 </div>

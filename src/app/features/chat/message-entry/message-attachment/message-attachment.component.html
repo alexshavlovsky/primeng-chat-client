@@ -1,22 +1,20 @@
-<div class="container">
-  <button pButton type="button" class="msg-attachment ui-button-raised ui-button-secondary"
+<div class="container" [style]="{borderRadius: thumbType?'0 0 10px 10px':'3px'}">
+  <ng-container *ngIf="thumbType && !player">
+    <p-progressSpinner [hidden]="!doShowSpinner" strokeWidth="4"
+                       [style]="{width: '100px', height: '100px', margin: '72px'}"></p-progressSpinner>
+    <img [hidden]="doShowSpinner" class="img-thumb"
+         (load)="this.doShowSpinner=false"
+         (error)="this.doShowSpinner=false"
+         *ngIf="doLazyLoadImage" src="{{buildThumbUrl(attachment)}}" alt="{{attachment.type}}">
+  </ng-container>
+  <video [hidden]="!player" id="{{'vid'+attachment.fileId}}" controls crossorigin></video>
+  <button pButton pRipple type="button" class="msg-attachment p-button-text p-button-secondary"
+          [style]="{borderRadius: thumbType?'0 0 10px 10px':'3px'}"
           (click)="clickDownload(attachment)"
-          icon="{{thumbType?'':'pi pi-paperclip'}}"
+          icon="pi pi-paperclip"
           pTooltip="{{(attachment.size|fileSize)+' '+(attachment.lastModified|date:'dd.MM.yy HH:mm')}}"
           appDeferLoad
           (deferLoad)="doLazyLoadImage=true"
           label="{{attachment.name}}">
-    <ng-container *ngIf="thumbType && !player">
-      <p-progressSpinner [hidden]="!doShowSpinner" strokeWidth="4"
-                         [style]="{width: '100px', height: '100px', margin: '72px'}"></p-progressSpinner>
-      <img [hidden]="doShowSpinner" class="img-thumb"
-           (load)="this.doShowSpinner=false"
-           (error)="this.doShowSpinner=false"
-           *ngIf="doLazyLoadImage" src="{{buildThumbUrl(attachment)}}" alt="{{attachment.type}}">
-    </ng-container>
-    <video [hidden]="!player" id="{{'vid'+attachment.fileId}}" controls crossorigin>
-    </video>
   </button>
-  <button *ngIf="player" pButton icon="pi pi-download" class="btn ui-button-rounded"
-          (click)="clickDownloadVideo(attachment)"></button>
 </div>

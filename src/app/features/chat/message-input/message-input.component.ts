@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {MenuItem} from 'primeng';
 import {FileSizePipe} from '../file-size.pipe';
 import {throttleTime} from 'rxjs/operators';
+import {MenuItem} from 'primeng/api';
 
 export interface MessageWithAttachment {
   message: string;

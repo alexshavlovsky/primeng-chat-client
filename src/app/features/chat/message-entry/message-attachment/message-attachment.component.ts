@@ -62,23 +62,11 @@ export class MessageAttachmentComponent implements OnInit {
     }
   }
 
-  buildImageHtml(type: string, fileName: string) {
-    return type.startsWith('image') ?
-      `<div style="display:table-cell;width:240px;height:240px;text-align:center;vertical-align:middle;"><img src="${this.thumbsUrl}${fileName}" alt="${type}"></div>` :
-      '';
-  }
-
   buildThumbUrl(attachment: AttachmentModel) {
     return this.thumbsUrl + this.thumbType + '/' + attachment.fileId;
   }
 
   clickDownload(attachment: AttachmentModel) {
-    if (!this.player) {
-      this.attachmentRequest.emit(attachment);
-    }
-  }
-
-  clickDownloadVideo(attachment: AttachmentModel) {
     this.attachmentRequest.emit(attachment);
   }
 }
