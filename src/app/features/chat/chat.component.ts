@@ -41,6 +41,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   messages: ServerMessageModel[] = [];
   users: ChatClientTypingModel[] = [];
   progress: number = null;
+  fixedScroll = false;
 
   nick: string;
   nickChanged: Subject<string> = new Subject();
@@ -89,7 +90,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       filter(buffer => buffer.length > 0),
       tap(m => {
         this.messages.push(...m);
-        setTimeout(() => this.scrollToBottom());
+        setTimeout(() => this.scrollToBottom(false));
       })
     ).subscribe();
     this.nick = this.principal.nick;
@@ -176,9 +177,13 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
-  private scrollToBottom() {
+  scrollToBottom(force: boolean) {
+    if (!force && this.fixedScroll) {
+      return;
+    }
     try {
-      this.msgScroll.nativeElement.scrollTop = this.msgScroll.nativeElement.scrollHeight;
+      const el = this.msgScroll.nativeElement;
+      el.scrollTop = el.scrollHeight - el.clientHeight;
     } catch (err) {
     }
   }
@@ -187,5 +192,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     // this also cancels all subscriptions to the ws subject
     // so a manual unsubscription is unnecessary
     this.ws.closeConnection();
+  }
+
+  onScroll() {
+    const el = this.msgScroll.nativeElement;
+    this.fixedScroll = el.scrollTop < el.scrollHeight - el.clientHeight * 1.1;
   }
 }
