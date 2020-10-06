@@ -7,12 +7,10 @@
              [(ngModel)]="nick"
              (ngModelChange)="nickChanged.next($event)"
              pTooltip="Your nick"
-             tooltipPosition="bottom"
       >
       <button pButton pRipple type="button" icon="pi pi-bars" class="p-button-info"
               (click)="cornerMenu.toggle($event)"
               pTooltip="User menu"
-              tooltipPosition="bottom"
       ></button>
     </div>
     <div class="users-list-entry"

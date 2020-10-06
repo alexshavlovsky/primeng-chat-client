@@ -3,24 +3,20 @@
   <button pButton pRipple type="button" icon="pi pi-paperclip" class="p-button-info"
           (click)="fileInputDialog.click()"
           pTooltip="Attach files"
-          tooltipPosition="top"
   >
     <input type="file" style="display:none" #fileInputDialog multiple (change)="newFilesAdded($event)">
   </button>
   <button *ngIf="filesList.length>0" pButton pRipple class="p-button-info" (click)="filesMenu.toggle($event)"
           [label]="filesList.length.toString()" [style]="{marginLeft: '1px'}"
           pTooltip="{{filesToolTipText}}"
-          tooltipPosition="top"
   ></button>
   <input type="text" pInputText placeholder="Public message" [(ngModel)]="inputText"
          (input)="userTypingRaw.emit()"
          (keyup.enter)="send()"
          pTooltip="Message text"
-         tooltipPosition="top"
   >
   <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-info"
           (click)="send()"
           pTooltip="Send message"
-          tooltipPosition="top"
   ></button>
 </div>
