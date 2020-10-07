@@ -73,9 +73,27 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.nick = this.principal.nick;
+    this.setCornerMenuHandlers();
+    this.setIncomingMessageHandlers();
+    this.setNickChangedHandler();
+    this.setUsersListHandlers();
+  }
+
+// ====== CORNER MENU UI EVENTS ========
+  setCornerMenuHandlers() {
     this.cornerMenuItems = [
       {label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout()},
     ];
+  }
+
+  logout() {
+    this.userPrincipalService.removePrincipal();
+    this.router.navigate(['/']);
+  }
+
+// ====== INCOMING WS MESSAGES ========
+  setIncomingMessageHandlers() {
     this.ws.incoming.pipe(
       tap(m => this.snapshotService.handle(m)),
       tap(m => this.typingService.handle(m)),
@@ -93,7 +111,21 @@ export class ChatComponent implements OnInit, OnDestroy {
         setTimeout(() => this.scrollToBottom(false));
       })
     ).subscribe();
-    this.nick = this.principal.nick;
+  }
+
+  scrollToBottom(force: boolean) {
+    if (!force && this.fixedScroll) {
+      return;
+    }
+    try {
+      const el = this.msgScroll.nativeElement;
+      el.scrollTop = el.scrollHeight - el.clientHeight;
+    } catch (err) {
+    }
+  }
+
+// ====== NICK CHANGED UI EVENT ========
+  setNickChangedHandler() {
     this.nickChanged.pipe(
       debounceTime(1000),
       distinctUntilChanged(),
@@ -103,7 +135,10 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.ws.sendUpdateMe();
       })
     ).subscribe();
+  }
 
+// ====== USERS LIST UPDATE ========
+  setUsersListHandlers() {
     // combine a users list managed by the snapshot service with a typingMap managed by the typing service
     // and sort the resulting list
     combineLatest([this.snapshotService.getClientsList$(), this.typingService.getTypingMap$()]).pipe(
@@ -116,6 +151,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
   }
 
+
+// ====== OUTGOING MESSAGES UI EVENT ========
   sendMessage(payload: MessageWithAttachment) {
     // no attachments
     if (payload.files.length === 0) {
@@ -125,7 +162,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     this.progress = 0;
 
-    // send attachments as a form data
+    // prepare form data
     const formData: FormData = new FormData();
     const attachments: AttachmentModel[] = [];
     payload.files.forEach(file => {
@@ -140,6 +177,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       attachments.push(attachment);
     });
 
+    // upload from date and handle progress bar
     this.downloadService.uploadFormData(formData).pipe(
       tap(e => {
         if (e.type === HttpEventType.Response && e.status === 200) {
@@ -154,6 +192,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     ).subscribe(v => this.progress = v);
   }
 
+// ====== DOWNLOAD ATTACHMENT UI EVENT ========
   downloadAttachment(attachment: AttachmentModel) {
     this.downloadService.downloadAttachment(attachment).pipe(
       catchError(e => {
@@ -168,34 +207,20 @@ export class ChatComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
+// ====== USER TYPING UI EVENT ========
   userTyping() {
     this.ws.sendSetTyping();
   }
 
-  logout() {
-    this.userPrincipalService.removePrincipal();
-    this.router.navigate(['/']);
-  }
-
-  scrollToBottom(force: boolean) {
-    if (!force && this.fixedScroll) {
-      return;
-    }
-    try {
-      const el = this.msgScroll.nativeElement;
-      el.scrollTop = el.scrollHeight - el.clientHeight;
-    } catch (err) {
-    }
+// ====== SCROLL UI EVENT ========
+  onScroll() {
+    const el = this.msgScroll.nativeElement;
+    this.fixedScroll = el.scrollTop < el.scrollHeight - el.clientHeight * 1.1;
   }
 
   ngOnDestroy(): void {
     // this also cancels all subscriptions to the ws subject
     // so a manual unsubscription is unnecessary
     this.ws.closeConnection();
-  }
-
-  onScroll() {
-    const el = this.msgScroll.nativeElement;
-    this.fixedScroll = el.scrollTop < el.scrollHeight - el.clientHeight * 1.1;
   }
 }
