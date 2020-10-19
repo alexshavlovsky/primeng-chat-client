@@ -33,6 +33,10 @@ export class UrlFactoryService {
     return this.uploadUrl('/videos/streams/');
   }
 
+  public getMessageHistoryUrl(): string {
+    return this.uploadUrl('/message-history/');
+  }
+
   private buildUrl(protocol: string, uri: string) {
     const l = window.location;
     const hostName = this.appProps.API_HOST ? this.appProps.API_HOST : l.hostname;

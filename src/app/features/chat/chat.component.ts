@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UserPrincipalService} from '../../core/services/user-principal.service';
 import {Router} from '@angular/router';
 import {MenuItem, MessageService} from 'primeng/api';
-import {combineLatest, EMPTY, Observable, Subject} from 'rxjs';
+import {combineLatest, EMPTY, from, Observable, Subject, zip} from 'rxjs';
 import {WsService} from '../../core/services/ws.service';
 import {ChatSnapshotService} from '../../core/services/chat-snapshot.service';
 import {
@@ -28,6 +28,8 @@ import {TypingService} from '../../core/services/typing.service';
 import {UserModel} from '../../core/models/user.model';
 import {UrlFactoryService} from '../../core/services/url-factory.service';
 import {VideoSourceUpdateModel} from '../../core/models/video-source-update.model';
+import {HttpService} from '../../core/services/http.service';
+import {flatMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'app-chat',
@@ -42,6 +44,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   users: ChatClientTypingModel[] = [];
   progress: number = null;
   fixedScroll = false;
+
+  scrollEmitter = new EventEmitter<number>();
 
   nick: string;
   nickChanged: Subject<string> = new Subject();
@@ -60,7 +64,8 @@ export class ChatComponent implements OnInit, OnDestroy {
               private downloadService: AttachmentService,
               private messageService: MessageService,
               private typingService: TypingService,
-              private urlFactory: UrlFactoryService
+              private urlFactory: UrlFactoryService,
+              private httpService: HttpService
   ) {
   }
 
@@ -78,6 +83,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.setIncomingMessageHandlers();
     this.setNickChangedHandler();
     this.setUsersListHandlers();
+    this.setMessageHistoryHandler();
   }
 
 // ====== CORNER MENU UI EVENTS ========
@@ -216,6 +222,24 @@ export class ChatComponent implements OnInit, OnDestroy {
   onScroll() {
     const el = this.msgScroll.nativeElement;
     this.fixedScroll = el.scrollTop < el.scrollHeight - el.clientHeight * 1.1;
+    this.scrollEmitter.emit(el.scrollTop);
+  }
+
+  private setMessageHistoryHandler() { // fires when a scroll position reaches the top of the chat
+    this.scrollEmitter.pipe(
+      debounceTime(1000),
+      filter(pos => pos === 0),
+      map(_ => this.messages.find(m => m.id !== 'internal')),
+      filter(m => m !== undefined),
+      flatMap(m => zip(from([m]), this.httpService.getMessageHistory(m)))
+    ).subscribe(z => {
+      const [mes, res] = [...z];
+      if (res.length > 0) {
+        const pos = this.messages.findIndex(m => m.id === mes.id);
+        this.messages.splice(pos, 0, ...res);
+      }
+      // TODO: maintain a scroll position
+    });
   }
 
   ngOnDestroy(): void {
