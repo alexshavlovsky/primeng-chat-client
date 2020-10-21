@@ -10,6 +10,7 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  exhaustMap,
   filter,
   finalize,
   map,
@@ -29,7 +30,6 @@ import {UserModel} from '../../core/models/user.model';
 import {UrlFactoryService} from '../../core/services/url-factory.service';
 import {VideoSourceUpdateModel} from '../../core/models/video-source-update.model';
 import {HttpService} from '../../core/services/http.service';
-import {flatMap} from 'rxjs/internal/operators';
 
 @Component({
   selector: 'app-chat',
@@ -227,18 +227,19 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private setMessageHistoryHandler() { // fires when a scroll position reaches the top of the chat
     this.scrollEmitter.pipe(
-      debounceTime(1000),
+      debounceTime(200),
       filter(pos => pos === 0),
       map(_ => this.messages.find(m => m.id !== 'internal')),
       filter(m => m !== undefined),
-      flatMap(m => zip(from([m]), this.httpService.getMessageHistory(m)))
+      exhaustMap(m => zip(from([m]), this.httpService.getMessageHistory(m)))
     ).subscribe(z => {
       const [mes, res] = [...z];
       if (res.length > 0) {
         const pos = this.messages.findIndex(m => m.id === mes.id);
-        this.messages.splice(pos, 0, ...res);
+//        this.messages.splice(pos, 0, ...res); // this will NOT remove internal messages
+        this.messages.splice(0, pos, ...res); // this WILL remove internal messages
+        setTimeout(() => document.getElementById('m' + mes.id).scrollIntoView());
       }
-      // TODO: maintain a scroll position
     });
   }
 

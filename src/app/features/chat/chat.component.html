@@ -25,7 +25,7 @@
     </div>
     <div #messagesScroll (scroll)="onScroll()" class="msg-list-scroll-container">
       <ul class="msg-list">
-        <li class="msg-list-entry" *ngFor='let message of messages'>
+        <li class="msg-list-entry" *ngFor='let message of messages' [id]="'m'+message.id">
           <app-message-entry
             [principal]="principal" [message]="message" [thumbsUrl]="thumbsUrl"
             [videoSourceUpdates$]="videoSourceUpdates$"
