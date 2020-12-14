@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UserPrincipalService} from '../../core/services/user-principal.service';
 import {Router} from '@angular/router';
 import {MenuItem, MessageService} from 'primeng/api';
@@ -65,7 +65,8 @@ export class ChatComponent implements OnInit, OnDestroy {
               private messageService: MessageService,
               private typingService: TypingService,
               private urlFactory: UrlFactoryService,
-              private httpService: HttpService
+              private httpService: HttpService,
+              private changeDetectionRef: ChangeDetectorRef
   ) {
   }
 
@@ -238,7 +239,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         const pos = this.messages.findIndex(m => m.id === mes.id);
 //        this.messages.splice(pos, 0, ...res); // this will NOT remove internal messages
         this.messages.splice(0, pos, ...res); // this WILL remove internal messages
-        setTimeout(() => document.getElementById('m' + mes.id).scrollIntoView());
+        this.changeDetectionRef.detectChanges();
+        document.getElementById('m' + mes.id).scrollIntoView();
       }
     });
   }
