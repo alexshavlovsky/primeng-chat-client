@@ -17,8 +17,8 @@ A SpringBoot service for this project: [Pure Reactive SpringBoot WebFlux MongoDB
 ## Technology Stack
 Component            | Technology
 ---                  | ---
-JS framework         | Angular 9
-UI components        | Prime Ng 9
+JS framework         | Angular 11
+UI components        | Prime Ng 11
 Chat protocol        | WebSockets
 Video streaming      | [A simple HTML5, YouTube and Vimeo player](https://github.com/sampotts/plyr)
 
