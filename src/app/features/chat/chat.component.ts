@@ -115,7 +115,8 @@ export class ChatComponent implements OnInit, OnDestroy {
       filter(buffer => buffer.length > 0),
       tap(m => {
         this.messages.push(...m);
-        setTimeout(() => this.scrollToBottom(false));
+        this.changeDetectionRef.detectChanges();
+        this.scrollToBottom(false);
       })
     ).subscribe();
   }
