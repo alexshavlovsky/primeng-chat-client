@@ -232,7 +232,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       debounceTime(200),
       filter(pos => pos === 0),
       map(_ => this.messages.find(m => m.id !== 'internal')),
-      filter(m => m !== undefined),
+      filter(m => m !== undefined && m.id !== undefined),
       exhaustMap(m => zip(from([m]), this.httpService.getMessageHistory(m)))
     ).subscribe(z => {
       const [mes, res] = [...z];
