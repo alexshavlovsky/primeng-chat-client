@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:1.20.0-alpine
 ARG key_store_pass
 # install openssl
 RUN apk add --no-cache openssl
